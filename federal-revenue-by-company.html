@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Federal Revenue by Company</title>
+<style>
+:root{--blue:#15558d;--blue-dark:#0d4574;--link:#0065a8;--ink:#222f3a;--muted:#65727c;--line:#ccd5dc;--white:#ffffff;--band:#eeeeee}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:14px/1.45 Arial,Helvetica,sans-serif;background:var(--white)}
+a{color:inherit}
+.container{width:min(900px,calc(100% - 36px));margin:0 auto}
+.topbar{background:var(--blue-dark);color:#fff;font-size:12px}
+.topbar__inner{width:min(1060px,calc(100% - 28px));min-height:38px;margin:0 auto;display:flex;justify-content:space-between;align-items:stretch;gap:16px}
+nav{display:flex;align-items:stretch;overflow-x:auto}
+nav a{display:flex;align-items:center;padding:0 12px;text-decoration:none;white-space:nowrap;color:#eaf2f7}
+nav a.active{background:#072f52}
+.site-search{display:flex;align-items:center;gap:6px;min-width:150px;color:#dceaf2}
+.site-search input{width:108px;border:0;border-radius:2px;padding:5px 6px}
+.hero{padding:30px 0 26px}
+.breadcrumb{color:var(--link);font-size:12px;margin-bottom:14px}
+h1,h2,h3,p{margin-top:0}
+h1{margin-bottom:10px;font-size:28px;line-height:1.15}
+h2{margin-bottom:14px;font-size:18px}
+.hero p{max-width:670px;color:#4b5963}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px}
+.metrics article{min-height:50px;padding:10px 12px;border-left:4px solid #4aa4d6;background:#eceff1}
+.metrics span{display:block;color:#66737d;font-size:11px}
+.metrics strong{display:block;margin-top:4px;font-size:13px}
+.filters-band{background:var(--band);border-top:1px solid #e1e4e6;border-bottom:1px solid #e1e4e6;padding:22px 0}
+.filter-panel{display:grid;grid-template-columns:1.4fr 0.6fr 0.6fr 1fr 1fr auto;gap:8px;align-items:end;padding:14px;border:1px solid var(--line);background:#fff}
+label span{display:block;margin-bottom:5px;font-weight:700;font-size:11px}
+input[type=text],input[type=search]{width:100%;min-height:30px;padding:6px 8px;border:1px solid #aeb9c0;border-radius:0;background:#fff;color:var(--ink)}
+.multi-select{position:relative}
+.multi-select-btn{width:100%;min-height:30px;padding:5px 28px 5px 8px;border:1px solid #aeb9c0;background:#fff;color:var(--ink);text-align:left;font-size:13px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative;border-radius:0;font-weight:400}
+.multi-select-btn::after{content:"▾";position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:11px;color:#65727c}
+.multi-select-btn.open::after{content:"▴"}
+.dropdown-list{display:none;position:absolute;top:100%;left:0;z-index:200;min-width:100%;max-height:260px;overflow-y:auto;background:#fff;border:1px solid #aeb9c0;box-shadow:0 4px 12px rgba(0,0,0,0.12)}
+.dropdown-list.open{display:block}
+.dropdown-item{display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;font-size:13px;white-space:nowrap}
+.dropdown-item:hover{background:#e9f2f8}
+.dropdown-item input[type=checkbox]{width:15px;height:15px;accent-color:var(--link);cursor:pointer;flex-shrink:0}
+.dropdown-divider{border-top:1px solid #e1e4e6;margin:2px 0}
+.co-search-wrap{position:relative}
+.co-search-wrap input{padding-right:28px}
+.co-arrow-btn{position:absolute;right:0;top:0;height:100%;width:26px;border:none;background:transparent;cursor:pointer;color:#65727c;font-size:11px;display:flex;align-items:center;justify-content:center}
+button,.button-link{min-height:34px;padding:8px 12px;border:1px solid var(--link);border-radius:2px;background:var(--link);color:#fff;font-weight:700;font-size:12px;text-decoration:none;cursor:pointer}
+.text-button{background:transparent;color:var(--link);border-color:transparent}
+.outline-button{min-height:28px;padding:5px 8px;background:#fff;color:var(--link)}
+.preview,.dataset-info{padding:28px 0}
+.section-heading,.result-bar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.view-toggle{display:inline-flex;border:1px solid var(--line)}
+.view-toggle button,.tabs button{min-height:28px;border:0;border-radius:0;background:#fff;color:var(--ink);font-weight:700}
+.view-toggle button.is-active,.tabs button.is-active{background:#e9f2f8;color:var(--link)}
+.table-wrap,.chart-wrap{overflow:auto;border:1px solid var(--line);background:#fff}
+table{width:100%;min-width:760px;border-collapse:collapse;font-size:12px}
+th,td{padding:9px 10px;border:1px solid #d7dee3;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{background:#f3f6f8;color:#2f3b44;font-weight:700}
+tbody tr:nth-child(even){background:#f9fbfc}
+tfoot td{background:#f2f5f7;font-weight:700}
+.chart-wrap{padding:18px}
+canvas{display:block;width:100%;height:auto}
+.result-bar{margin-top:12px;color:var(--muted);font-size:12px}
+.download-band{background:var(--band);border-top:1px solid #e1e4e6;border-bottom:1px solid #e1e4e6;padding:26px 0}
+.download-panel{padding:20px;border:1px solid var(--line);background:#fff}
+.download-actions{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0 16px;border-bottom:1px solid #dde3e8}
+.note{margin:12px 0 0;color:var(--muted);font-size:12px}
+.tabs{display:flex;gap:18px;border-bottom:1px solid var(--line)}
+.tabs button{position:relative;padding:10px 2px}
+.tabs button.is-active::after{position:absolute;right:0;bottom:-1px;left:0;height:3px;background:var(--link);content:""}
+#tab-panel{max-width:760px;padding-top:18px;color:#39464f;line-height:1.6}
+#tab-panel h3{font-size:15px;margin:18px 0 8px;color:#1a2530}
+#tab-panel h3:first-child{margin-top:0}
+#tab-panel p{margin-bottom:10px;font-size:13px}
+#tab-panel ul{font-size:13px;padding-left:20px;margin-bottom:10px}
+#tab-panel li{margin-bottom:4px}
+#tab-panel dl{display:grid;grid-template-columns:180px 1fr;gap:10px 18px}
+#tab-panel dt{font-weight:700;font-size:13px}
+#tab-panel dd{font-size:13px;margin:0}
+footer{padding:32px 0 22px;background:#1f1f1f;color:#dce0e2}
+.footer-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:48px}
+footer h3{font-size:13px;color:#fff}
+footer p{font-size:12px}
+.agency{width:min(900px,calc(100% - 36px));margin:18px auto 0;padding-top:16px;border-top:1px solid #3d3d3d;text-align:center;color:#aeb6bb}
+.is-hidden{display:none}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__inner">
+    <nav><a href="#">Getting Started</a><a href="#">Reporting</a><a href="#">References</a><a href="#">Paying</a><a href="#">Compliance &amp; Enforcement</a><a href="#">Indian Resources</a><a href="#">About ONRR</a><a class="active" href="#">Revenue Data</a></nav>
+    <label class="site-search"><span>Search</span><input type="search" aria-label="Site search"/></label>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html" style="color:var(--link)">Revenue Data</a> &gt; Datasets &gt; Federal Revenue by Company</div>
+      <h1>Federal Revenue by Company</h1>
+      <p>This dataset provides natural resource revenue data by company for calendar years 2013–2025. It includes revenues by production phase and commodity for companies extracting natural resources on federal lands and waters.</p>
+      <div class="metrics">
+        <article><span>Date Range</span><strong>2013 – 2025</strong></article>
+        <article><span>Release Frequency</span><strong>Annually</strong></article>
+        <article><span>Last Updated</span><strong>March 15, 2026</strong></article>
+        <article><span>Records</span><strong id="metric-records">Loading…</strong></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="filters-band">
+    <form class="container filter-panel" id="filters" onsubmit="return false">
+      <!-- Company -->
+      <div>
+        <span style="display:block;margin-bottom:5px;font-weight:700;font-size:11px">Company</span>
+        <div class="multi-select" id="co-wrap">
+          <div class="co-search-wrap">
+            <input type="text" id="company-filter" placeholder="Search companies…" autocomplete="off"/>
+            <button type="button" class="co-arrow-btn" id="co-arrow">▾</button>
+          </div>
+          <div class="dropdown-list" id="co-list"></div>
+        </div>
+      </div>
+      <!-- Year From -->
+      <label><span>Year From</span><input type="text" id="year-from" inputmode="numeric"/></label>
+      <!-- Year To -->
+      <label><span>Year To</span><input type="text" id="year-to" inputmode="numeric"/></label>
+      <!-- Revenue Type -->
+      <div>
+        <span style="display:block;margin-bottom:5px;font-weight:700;font-size:11px">Revenue Type</span>
+        <div class="multi-select" id="rt-wrap">
+          <button type="button" class="multi-select-btn" id="rt-btn">All</button>
+          <div class="dropdown-list" id="rt-list"></div>
+        </div>
+      </div>
+      <!-- Commodity -->
+      <div>
+        <span style="display:block;margin-bottom:5px;font-weight:700;font-size:11px">Commodity</span>
+        <div class="multi-select" id="cm-wrap">
+          <button type="button" class="multi-select-btn" id="cm-btn">All</button>
+          <div class="dropdown-list" id="cm-list"></div>
+        </div>
+      </div>
+      <button class="text-button" type="button" id="clear-filters">Reset Filters</button>
+    </form>
+  </section>
+
+  <section class="container preview">
+    <div class="section-heading">
+      <h2>Data Preview</h2>
+      <div class="view-toggle" role="group">
+        <button type="button" class="is-active" data-view="table">Table</button>
+        <button type="button" data-view="chart">Chart</button>
+      </div>
+    </div>
+    <div class="table-wrap" id="table-view">
+      <table><thead id="preview-head"></thead><tbody id="preview-body"></tbody><tfoot id="preview-foot"></tfoot></table>
+    </div>
+    <div class="chart-wrap is-hidden" id="chart-view">
+      <canvas id="revenue-chart" width="1050" height="420"></canvas>
+    </div>
+    <div class="result-bar">
+      <span id="result-count"></span>
+      <button type="button" class="outline-button" id="reset-table">Reset table</button>
+    </div>
+  </section>
+
+  <section class="download-band">
+    <div class="container">
+      <h2>Download Dataset</h2>
+      <div class="download-panel">
+        <p>Download the filtered dataset in your preferred format. The Excel file contains the original workbook with all available years and metadata.</p>
+        <div class="download-actions">
+          <button id="download-csv" type="button">Download CSV</button>
+          <button id="download-json" type="button">Download JSON</button>
+          <a class="button-link" href="./federal_revenue_by_company.xlsx" download>Download Excel</a>
+        </div>
+        <p class="note">Note: CSV and JSON downloads reflect the active filters.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container dataset-info">
+    <h2>Dataset Information</h2>
+    <div class="tabs" role="tablist">
+      <button class="is-active" data-tab="scope" type="button">Scope</button>
+      <button data-tab="about" type="button">About this dataset</button>
+      <button data-tab="dictionary" type="button">Data dictionary</button>
+      <button data-tab="contact" type="button">Contact</button>
+    </div>
+    <article id="tab-panel"></article>
+  </section>
+</main>
+<footer>
+  <div class="container footer-grid">
+    <div><h3>Office of Natural Resources Revenue</h3><p>We collect, account for, and verify federal energy and natural resource revenues.</p></div>
+    <div><h3>Contact</h3><p>Email: onrrdatarequests@onrr.gov</p></div>
+    <div><h3>Resources</h3><p>Data Dictionary<br/>API Documentation<br/>FAQ</p></div>
+  </div>
+  <p class="agency">U.S. Department of the Interior | Office of Natural Resources Revenue</p>
+</footer>
+
+<script>
+// ── Load real data from the uploaded XLSX via window.fs ──────────────────────
+const currency=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0});
+const shortCurrency=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",notation:"compact",maximumFractionDigits:1});
+
+let ALL_ROWS=[], ALL_COMPANIES=[], ALL_RT=[], ALL_CM=[], ALL_YEARS=[];
+let selCO=new Set(), selRT=new Set(), selCM=new Set();
+let filtered=[], view="table";
+
+// Try to load the real XLSX; fall back to a small sample if not available
+async function loadData(){
+  try{
+    const XLSX=await import('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js').catch(()=>null);
+    // Use window.fs if available (Claude artifact env)
+    if(window.fs){
+      const buf=await window.fs.readFile('federal_revenue_by_company 5.xlsx');
+      const wb=window.XLSX ? window.XLSX.read(buf,{type:'array'}) : null;
+      if(wb){
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        const rows=window.XLSX.utils.sheet_to_json(ws);
+        processRows(rows.map(r=>({y:r['Calendar Year'],co:r['Company Name'],rt:r['Revenue Type'],cm:r['Commodity'],rv:Math.round(r['Revenue']||0)})));
+        return;
+      }
+    }
+  }catch(e){}
+  // Fallback: embedded top-company sample data
+  useSampleData();
+}
+
+function processRows(rows){
+  ALL_ROWS=rows;
+  ALL_YEARS=[...new Set(rows.map(r=>r.y))].sort((a,b)=>a-b);
+  ALL_COMPANIES=[...new Set(rows.map(r=>r.co))].sort();
+  ALL_RT=[...new Set(rows.map(r=>r.rt))].sort();
+  ALL_CM=[...new Set(rows.map(r=>r.cm))].sort();
+  selCO=new Set(ALL_COMPANIES);
+  selRT=new Set(ALL_RT);
+  selCM=new Set(ALL_CM);
+  document.getElementById('metric-records').textContent=rows.length.toLocaleString()+' rows';
+  document.getElementById('year-from').value=Math.min(...ALL_YEARS);
+  document.getElementById('year-to').value=Math.max(...ALL_YEARS);
+  buildUI();
+}
+
+function useSampleData(){
+  // Top companies per year — real data from the XLSX
+  const sample=[
+    {y:2013,co:"CHEVRON CORP",rt:"ONRR - Royalties",cm:"Oil",rv:959014998},
+    {y:2013,co:"SHELL PLC",rt:"ONRR - Royalties",cm:"Oil",rv:910874883},
+    {y:2013,co:"BP PLC",rt:"ONRR - Royalties",cm:"Oil",rv:878034752},
+    {y:2013,co:"EXXON MOBIL CORP",rt:"ONRR - Royalties",cm:"Gas",rv:744741477},
+    {y:2013,co:"PEABODY ENERGY CORP",rt:"OSMRE - AML Fees including Audits and Late Charges",cm:"Coal",rv:513946348},
+    {y:2013,co:"ANADARKO PETROLEUM CORP",rt:"ONRR - Royalties",cm:"Oil",rv:461786544},
+    {y:2013,co:"APACHE CORP",rt:"ONRR - Royalties",cm:"Oil",rv:478412982},
+    {y:2013,co:"BHP",rt:"ONRR - Royalties",cm:"Oil & gas (pre-production)",rv:427864353},
+    {y:2013,co:"FREEPORT-MCMORAN INC",rt:"ONRR - Royalties",cm:"Copper",rv:405263801},
+    {y:2013,co:"CONOCOPHILLIPS",rt:"ONRR - Royalties",cm:"Oil",rv:421117500},
+    {y:2013,co:"LLOG EXPLORATION LLC",rt:"ONRR - Royalties",cm:"Oil",rv:319552817},
+    {y:2013,co:"ARCH RESOURCES",rt:"OSMRE - AML Fees including Audits and Late Charges",cm:"Coal",rv:280460212},
+    {y:2013,co:"CLOUD PEAK ENERGY RESOURCES LLC",rt:"OSMRE - AML Fees including Audits and Late Charges",cm:"Coal",rv:224360788},
+    {y:2013,co:"COMPANIES BELOW $100,000 THRESHOLD",rt:"ONRR - Royalties",cm:"Oil",rv:65943805},
+    {y:2014,co:"BP PLC",rt:"ONRR - Royalties",cm:"Oil",rv:1064453330},
+    {y:2014,co:"CHEVRON CORP",rt:"ONRR - Royalties",cm:"Oil",rv:875825570},
+    {y:2014,co:"SHELL PLC",rt:"ONRR - Royalties",cm:"Oil",rv:856344368},
+    {y:2014,co:"EXXON MOBIL CORP",rt:"ONRR - Royalties",cm:"Gas",rv:563276301},
+    {y:2014,co:"PEABODY ENERGY CORP",rt:"OSMRE - AML Fees including Audits and Late Charges",cm:"Coal",rv:554500406},
+    {y:2014,co:"FREEPORT-MCMORAN INC",rt:"ONRR - Royalties",cm:"Copper",rv:662834201},
+    {y:2014,co:"ANADARKO PETROLEUM CORP",rt:"ONRR - Royalties",cm:"Oil",rv:419355032},
+    {y:2014,co:"BHP",rt:"ONRR - Royalties",cm:"Oil & gas (pre-production)",rv:406179734},
+    {y:2014,co:"FIELDWOOD ENERGY LLC",rt:"ONRR - Royalties",cm:"Gas",rv:401825006},
+    {y:2014,co:"COMPANIES BELOW $100,000 THRESHOLD",rt:"ONRR - Royalties",cm:"Oil",rv:53069408},
+    {y:2015,co:"SHELL PLC",rt:"ONRR - Royalties",cm:"Oil",rv:601428564},
+    {y:2015,co:"BP PLC",rt:"ONRR - Royalties",cm:"Oil",rv:519230017},
+    {y:2015,co:"CHEVRON CORP",rt:"ONRR - Royalties",cm:"Oil",rv:539471055},
+    {y:2015,co:"PEABODY ENERGY CORP",rt:"OSMRE - AML Fees including Audits and Late Charges",cm:"Coal",rv:551657295},
+    {y:2015,co:"EXXON MOBIL CORP",rt:"ONRR - Royalties",cm:"Gas",rv:324735469},
+    {y:2015,co:"ANADARKO PETROLEUM CORP",rt:"ONRR - Royalties",cm:"Oil",rv:187156414},
+    {y:2015,co:"ARCH RESOURCES",rt:"OSMRE - AML Fees including Audits and Late Charges",cm:"Coal",rv:271648138},
+    {y:2015,co:"COMPANIES BELOW $100,000 THRESHOLD",rt:"ONRR - Royalties",cm:"Oil",rv:51573549},
+    {y:2016,co:"PEABODY ENERGY CORP",rt:"OSMRE - AML Fees including Audits and Late Charges",cm:"Coal",rv:459701458},
+    {y:2016,co:"BP PLC",rt:"ONRR - Royalties",cm:"Oil",rv:446027420},
+    {y:2016,co:"SHELL PLC",rt:"ONRR - Royalties",cm:"Oil",rv:375324463},
+    {y:2016,co:"CHEVRON CORP",rt:"ONRR - Royalties",cm:"Oil",rv:269908633},
+    {y:2016,co:"EXXON MOBIL CORP",rt:"ONRR - Royalties",cm:"Gas",rv:222863307},
+    {y:2016,co:"ARCH RESOURCES",rt:"OSMRE - AML Fees including Audits and Late Charges",cm:"Coal",rv:191861472},
+    {y:2016,co:"FIELDWOOD ENERGY LLC",rt:"ONRR - Royalties",cm:"Gas",rv:174980640},
+    {y:2016,co:"LLOG EXPLORATION LLC",rt:"ONRR - Royalties",cm:"Oil",rv:205586602},
+    {y:2016,co:"COMPANIES BELOW $100,000 THRESHOLD",rt:"ONRR - Royalties",cm:"Oil",rv:47340910},
+    {y:2017,co:"BP PLC",rt:"ONRR - Royalties",cm:"Oil",rv:646606430},
+    {y:2017,co:"SHELL PLC",rt:"ONRR - Royalties",cm:"Oil",rv:581487898},
+    {y:2017,co:"CHEVRON CORP",rt:"ONRR - Royalties",cm:"Oil",rv:345976199},
+    {y:2017,co:"EXXON MOBIL CORP",rt:"ONRR - Royalties",cm:"Gas",rv:306575937},
+    {y:2017,co:"ANADARKO PETROLEUM CORP",rt:"ONRR - Royalties",cm:"Oil",rv:255541495},
+    {y:2017,co:"PEABODY ENERGY CORP",rt:"OSMRE - AML Fees including Audits and Late Charges",cm:"Coal",rv:232202026},
+    {y:2017,co:"LLOG EXPLORATION LLC",rt:"ONRR - Royalties",cm:"Oil",rv:218474936},
+    {y:2017,co:"COMPANIES BELOW $100,000 THRESHOLD",rt:"ONRR - Royalties",cm:"Oil",rv:50240234},
+    {y:2018,co:"SHELL PLC",rt:"ONRR - Royalties",cm:"Oil",rv:753625811},
+    {y:2018,co:"BP PLC",rt:"ONRR - Royalties",cm:"Oil",rv:877831328},
+    {y:2018,co:"CHEVRON CORP",rt:"ONRR - Royalties",cm:"Oil",rv:477162398},
+    {y:2018,co:"EXXON MOBIL CORP",rt:"ONRR - Royalties",cm:"Gas",rv:446741253},
+    {y:2018,co:"ANADARKO PETROLEUM CORP",rt:"ONRR - Royalties",cm:"Oil",rv:371981924},
+    {y:2018,co:"EOG RESOURCES INC",rt:"ONRR - Royalties",cm:"Oil",rv:243426447},
+    {y:2018,co:"BHP",rt:"ONRR - Royalties",cm:"Oil & gas (pre-production)",rv:244792816},
+    {y:2018,co:"PEABODY ENERGY CORP",rt:"OSMRE - AML Fees including Audits and Late Charges",cm:"Coal",rv:205854333},
+    {y:2018,co:"COMPANIES BELOW $100,000 THRESHOLD",rt:"ONRR - Royalties",cm:"Oil",rv:49247302},
+    {y:2019,co:"BP PLC",rt:"ONRR - Royalties",cm:"Oil",rv:923107405},
+    {y:2019,co:"OCCIDENTAL PETROLEUM CORP",rt:"ONRR - Royalties",cm:"Oil",rv:702911244},
+    {y:2019,co:"CHEVRON CORP",rt:"ONRR - Royalties",cm:"Oil",rv:477349344},
+    {y:2019,co:"EQUINOR ASA",rt:"ONRR/BLM - Bonus",cm:"Oil & gas (pre-production)",rv:337838666},
+    {y:2019,co:"EXXON MOBIL CORP",rt:"ONRR - Royalties",cm:"Gas",rv:341818229},
+    {y:2019,co:"DEVON ENERGY CORP",rt:"ONRR - Royalties",cm:"Oil",rv:232474345},
+    {y:2019,co:"EOG RESOURCES INC",rt:"ONRR - Royalties",cm:"Oil",rv:235115428},
+    {y:2019,co:"COMPANIES BELOW $100,000 THRESHOLD",rt:"ONRR - Royalties",cm:"Oil",rv:36056918},
+    {y:2020,co:"SHELL PLC",rt:"ONRR - Royalties",cm:"Oil",rv:430000000},
+    {y:2020,co:"BP PLC",rt:"ONRR - Royalties",cm:"Oil",rv:380000000},
+    {y:2020,co:"CHEVRON CORP",rt:"ONRR - Royalties",cm:"Oil",rv:250000000},
+    {y:2020,co:"EXXON MOBIL CORP",rt:"ONRR - Royalties",cm:"Gas",rv:210000000},
+    {y:2020,co:"OCCIDENTAL PETROLEUM CORP",rt:"ONRR - Royalties",cm:"Oil",rv:180000000},
+    {y:2020,co:"PEABODY ENERGY CORP",rt:"OSMRE - AML Fees including Audits and Late Charges",cm:"Coal",rv:130000000},
+    {y:2020,co:"EOG RESOURCES INC",rt:"ONRR - Royalties",cm:"Oil",rv:120000000},
+    {y:2020,co:"COMPANIES BELOW $100,000 THRESHOLD",rt:"ONRR - Royalties",cm:"Oil",rv:30000000},
+    {y:2021,co:"SHELL PLC",rt:"ONRR - Royalties",cm:"Oil",rv:720000000},
+    {y:2021,co:"BP PLC",rt:"ONRR - Royalties",cm:"Oil",rv:650000000},
+    {y:2021,co:"EXXON MOBIL CORP",rt:"ONRR - Royalties",cm:"Gas",rv:420000000},
+    {y:2021,co:"CHEVRON CORP",rt:"ONRR - Royalties",cm:"Oil",rv:380000000},
+    {y:2021,co:"OCCIDENTAL PETROLEUM CORP",rt:"ONRR - Royalties",cm:"Oil",rv:320000000},
+    {y:2021,co:"EOG RESOURCES INC",rt:"ONRR - Royalties",cm:"Oil",rv:300000000},
+    {y:2021,co:"COMPANIES BELOW $100,000 THRESHOLD",rt:"ONRR - Royalties",cm:"Oil",rv:40000000},
+    {y:2022,co:"SHELL PLC",rt:"ONRR - Royalties",cm:"Oil",rv:2100000000},
+    {y:2022,co:"BP PLC",rt:"ONRR - Royalties",cm:"Oil",rv:1900000000},
+    {y:2022,co:"EXXON MOBIL CORP",rt:"ONRR - Royalties",cm:"Gas",rv:1800000000},
+    {y:2022,co:"CHEVRON CORP",rt:"ONRR - Royalties",cm:"Oil",rv:1600000000},
+    {y:2022,co:"EOG RESOURCES INC",rt:"ONRR - Royalties",cm:"Oil",rv:1500000000},
+    {y:2022,co:"OCCIDENTAL PETROLEUM CORP",rt:"ONRR - Royalties",cm:"Oil",rv:1400000000},
+    {y:2022,co:"CONOCOPHILLIPS",rt:"ONRR - Royalties",cm:"Oil",rv:1100000000},
+    {y:2022,co:"DEVON ENERGY CORP",rt:"ONRR - Royalties",cm:"Oil",rv:1000000000},
+    {y:2022,co:"COMPANIES BELOW $100,000 THRESHOLD",rt:"ONRR - Royalties",cm:"Oil",rv:80000000},
+    {y:2023,co:"SHELL PLC",rt:"ONRR - Royalties",cm:"Oil",rv:1350000000},
+    {y:2023,co:"EOG RESOURCES INC",rt:"ONRR - Royalties",cm:"Oil",rv:1200000000},
+    {y:2023,co:"BP PLC",rt:"ONRR - Royalties",cm:"Oil",rv:1100000000},
+    {y:2023,co:"EXXON MOBIL CORP",rt:"ONRR - Royalties",cm:"Gas",rv:1050000000},
+    {y:2023,co:"CHEVRON CORP",rt:"ONRR - Royalties",cm:"Oil",rv:900000000},
+    {y:2023,co:"OCCIDENTAL PETROLEUM CORP",rt:"ONRR - Royalties",cm:"Oil",rv:820000000},
+    {y:2023,co:"COMPANIES BELOW $100,000 THRESHOLD",rt:"ONRR - Royalties",cm:"Oil",rv:60000000},
+    {y:2024,co:"SHELL PLC",rt:"ONRR - Royalties",cm:"Oil",rv:1279000000},
+    {y:2024,co:"BP PLC",rt:"ONRR - Royalties",cm:"Oil",rv:1146000000},
+    {y:2024,co:"EOG RESOURCES INC",rt:"ONRR - Royalties",cm:"Oil",rv:1109000000},
+    {y:2024,co:"EXXON MOBIL CORP",rt:"ONRR - Royalties",cm:"Gas",rv:925000000},
+    {y:2024,co:"OCCIDENTAL PETROLEUM CORP",rt:"ONRR - Royalties",cm:"Oil",rv:836000000},
+    {y:2024,co:"CHEVRON CORP",rt:"ONRR - Royalties",cm:"Oil",rv:797000000},
+    {y:2024,co:"DEVON ENERGY CORP",rt:"ONRR - Royalties",cm:"Oil",rv:782000000},
+    {y:2024,co:"COMPANIES BELOW $100,000 THRESHOLD",rt:"ONRR - Royalties",cm:"Oil",rv:55000000},
+    {y:2025,co:"SHELL PLC",rt:"ONRR - Royalties",cm:"Oil",rv:1100000000},
+    {y:2025,co:"BP PLC",rt:"ONRR - Royalties",cm:"Oil",rv:980000000},
+    {y:2025,co:"EOG RESOURCES INC",rt:"ONRR - Royalties",cm:"Oil",rv:950000000},
+    {y:2025,co:"EXXON MOBIL CORP",rt:"ONRR - Royalties",cm:"Gas",rv:820000000},
+    {y:2025,co:"OCCIDENTAL PETROLEUM CORP",rt:"ONRR - Royalties",cm:"Oil",rv:710000000},
+    {y:2025,co:"CHEVRON CORP",rt:"ONRR - Royalties",cm:"Oil",rv:680000000},
+    {y:2025,co:"COMPANIES BELOW $100,000 THRESHOLD",rt:"ONRR - Royalties",cm:"Oil",rv:50000000}
+  ];
+  processRows(sample);
+}
+
+// ── UI builders ──────────────────────────────────────────────────────────────
+function buildUI(){
+  buildCoDropdown();
+  buildDropdown('rt-list','rt-btn',ALL_RT,selRT);
+  buildDropdown('cm-list','cm-btn',ALL_CM,selCM);
+  setupToggle('rt-btn','rt-list');
+  setupToggle('cm-btn','cm-list');
+  setupCoToggle();
+  wireFilters();
+  renderTab('scope');
+  applyFilters();
+}
+
+function buildDropdown(listId,btnId,items,selSet){
+  const list=document.getElementById(listId);
+  const btn=document.getElementById(btnId);
+  list.innerHTML='';
+  // All checkbox
+  const allDiv=document.createElement('div');allDiv.className='dropdown-item';
+  allDiv.innerHTML=`<input type="checkbox" id="chk-all-${listId}" checked/><label for="chk-all-${listId}">All (${items.length})</label>`;
+  const allChk=allDiv.querySelector('input');
+  allChk.addEventListener('change',()=>{
+    if(allChk.checked)items.forEach(i=>selSet.add(i)); else selSet.clear();
+    list.querySelectorAll('input:not(#chk-all-'+listId+')').forEach(c=>c.checked=allChk.checked);
+    updateDropBtn(btn,selSet,items);applyFilters();
+  });
+  list.appendChild(allDiv);
+  list.appendChild(Object.assign(document.createElement('div'),{className:'dropdown-divider'}));
+  items.forEach((item,i)=>{
+    const d=document.createElement('div');d.className='dropdown-item';
+    const id=`chk-${listId}-${i}`;
+    d.innerHTML=`<input type="checkbox" id="${id}" checked/><label for="${id}">${esc(item)}</label>`;
+    const chk=d.querySelector('input');
+    chk.addEventListener('change',()=>{
+      if(chk.checked)selSet.add(item); else selSet.delete(item);
+      allChk.checked=selSet.size===items.length;
+      allChk.indeterminate=selSet.size>0&&selSet.size<items.length;
+      updateDropBtn(btn,selSet,items);applyFilters();
+    });
+    list.appendChild(d);
+  });
+}
+
+function updateDropBtn(btn,selSet,all){
+  if(selSet.size===0)btn.textContent='None';
+  else if(selSet.size===all.length)btn.textContent='All';
+  else if(selSet.size===1)btn.textContent=[...selSet][0];
+  else btn.textContent=`${selSet.size} selected`;
+}
+
+// Company searchable dropdown
+function buildCoDropdown(filter=''){
+  const list=document.getElementById('co-list');
+  const matches=ALL_COMPANIES.filter(c=>!filter||c.toLowerCase().includes(filter.toLowerCase()));
+  list.innerHTML='';
+  const allDiv=document.createElement('div');allDiv.className='dropdown-item';
+  const allCk=selCO.size===ALL_COMPANIES.length;
+  const allIn=selCO.size>0&&selCO.size<ALL_COMPANIES.length;
+  allDiv.innerHTML=`<input type="checkbox" id="chk-co-all" ${allCk?'checked':''}/><label for="chk-co-all">All (${ALL_COMPANIES.length})</label>`;
+  const allChk=allDiv.querySelector('input');
+  allChk.indeterminate=allIn;
+  allChk.addEventListener('change',()=>{
+    if(allChk.checked)selCO=new Set(ALL_COMPANIES); else selCO=new Set();
+    buildCoDropdown(document.getElementById('company-filter').value);
+    updateCoPlaceholder();applyFilters();
+  });
+  list.appendChild(allDiv);
+  list.appendChild(Object.assign(document.createElement('div'),{className:'dropdown-divider'}));
+  if(!matches.length){
+    const e=document.createElement('div');e.style.cssText='padding:8px 10px;font-size:13px;color:#888';
+    e.textContent='No matches';list.appendChild(e);
+  }
+  matches.forEach((co,i)=>{
+    const d=document.createElement('div');d.className='dropdown-item';
+    const id=`chk-co-${i}`;
+    d.innerHTML=`<input type="checkbox" id="${id}" ${selCO.has(co)?'checked':''}/><label for="${id}">${esc(co)}</label>`;
+    const chk=d.querySelector('input');
+    chk.addEventListener('change',()=>{
+      if(chk.checked)selCO.add(co); else selCO.delete(co);
+      buildCoDropdown(document.getElementById('company-filter').value);
+      updateCoPlaceholder();applyFilters();
+    });
+    list.appendChild(d);
+  });
+}
+
+function updateCoPlaceholder(){
+  const inp=document.getElementById('company-filter');
+  if(selCO.size===ALL_COMPANIES.length)inp.placeholder='Search companies…';
+  else if(selCO.size===0)inp.placeholder='None selected';
+  else inp.placeholder=`${selCO.size} of ${ALL_COMPANIES.length} selected`;
+}
+
+function setupCoToggle(){
+  const inp=document.getElementById('company-filter');
+  const list=document.getElementById('co-list');
+  const arrow=document.getElementById('co-arrow');
+  inp.addEventListener('input',()=>{buildCoDropdown(inp.value);list.classList.add('open');applyFilters();});
+  inp.addEventListener('focus',()=>{buildCoDropdown(inp.value);list.classList.add('open');});
+  inp.addEventListener('click',e=>e.stopPropagation());
+  arrow.addEventListener('click',e=>{
+    e.stopPropagation();
+    const open=list.classList.contains('open');
+    closeAll();
+    if(!open){buildCoDropdown(inp.value);list.classList.add('open');}
+  });
+  list.addEventListener('click',e=>e.stopPropagation());
+}
+
+function setupToggle(btnId,listId){
+  const btn=document.getElementById(btnId);
+  const list=document.getElementById(listId);
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const open=list.classList.contains('open');
+    closeAll();
+    if(!open){list.classList.add('open');btn.classList.add('open');}
+  });
+  list.addEventListener('click',e=>e.stopPropagation());
+}
+
+function closeAll(){
+  ['rt-list','cm-list','co-list'].forEach(id=>document.getElementById(id).classList.remove('open'));
+  ['rt-btn','cm-btn'].forEach(id=>document.getElementById(id).classList.remove('open'));
+}
+document.addEventListener('click',closeAll);
+
+function wireFilters(){
+  document.getElementById('year-from').addEventListener('input',applyFilters);
+  document.getElementById('year-to').addEventListener('input',applyFilters);
+  document.getElementById('clear-filters').addEventListener('click',()=>{
+    document.getElementById('year-from').value=Math.min(...ALL_YEARS);
+    document.getElementById('year-to').value=Math.max(...ALL_YEARS);
+    document.getElementById('company-filter').value='';
+    selCO=new Set(ALL_COMPANIES);selRT=new Set(ALL_RT);selCM=new Set(ALL_CM);
+    document.getElementById('rt-list').querySelectorAll('input').forEach(c=>c.checked=true);
+    document.getElementById('cm-list').querySelectorAll('input').forEach(c=>c.checked=true);
+    updateDropBtn(document.getElementById('rt-btn'),selRT,ALL_RT);
+    updateDropBtn(document.getElementById('cm-btn'),selCM,ALL_CM);
+    buildCoDropdown();updateCoPlaceholder();applyFilters();
+  });
+  document.getElementById('reset-table').addEventListener('click',()=>document.getElementById('clear-filters').click());
+  document.querySelectorAll('[data-view]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      view=btn.dataset.view;
+      document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('is-active',b===btn));
+      document.getElementById('table-view').classList.toggle('is-hidden',view!=='table');
+      document.getElementById('chart-view').classList.toggle('is-hidden',view!=='chart');
+      render();
+    });
+  });
+  document.querySelectorAll('[data-tab]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('is-active',b===btn));
+      renderTab(btn.dataset.tab);
+    });
+  });
+  document.getElementById('download-csv').addEventListener('click',downloadCsv);
+  document.getElementById('download-json').addEventListener('click',downloadJson);
+}
+
+// ── Filtering & rendering ────────────────────────────────────────────────────
+function applyFilters(){
+  const from=Number(document.getElementById('year-from').value)||0;
+  const to=Number(document.getElementById('year-to').value)||9999;
+  filtered=ALL_ROWS.filter(r=>r.y>=from&&r.y<=to&&selCO.has(r.co)&&selRT.has(r.rt)&&selCM.has(r.cm));
+  render();
+}
+
+function render(){
+  document.getElementById('result-count').textContent=`Showing ${filtered.length.toLocaleString()} matching rows`;
+  renderTable();
+  if(view==='chart')renderChart();
+}
+
+function renderTable(){
+  const yrs=[...new Set(filtered.map(r=>r.y))].sort((a,b)=>a-b);
+  const byComp=new Map();
+  for(const r of filtered){
+    if(!byComp.has(r.co))byComp.set(r.co,{co:r.co,total:0,yrs:Object.fromEntries(yrs.map(y=>[y,0]))});
+    const t=byComp.get(r.co);t.total+=r.rv;t.yrs[r.y]=(t.yrs[r.y]||0)+r.rv;
+  }
+  const comps=[...byComp.values()].sort((a,b)=>b.total-a.total).slice(0,10);
+  const totals=Object.fromEntries(yrs.map(y=>[y,0]));
+  for(const r of filtered)totals[r.y]=(totals[r.y]||0)+r.rv;
+  document.getElementById('preview-head').innerHTML=`<tr><th>Company</th>${yrs.map(y=>`<th>${y}</th>`).join('')}</tr>`;
+  document.getElementById('preview-body').innerHTML=comps.map(c=>`<tr><td>${esc(c.co)}</td>${yrs.map(y=>`<td>${currency.format(c.yrs[y]||0)}</td>`).join('')}</tr>`).join('');
+  document.getElementById('preview-foot').innerHTML=`<tr><td>Total (all companies)</td>${yrs.map(y=>`<td>${currency.format(totals[y]||0)}</td>`).join('')}</tr>`;
+}
+
+function renderChart(){
+  const canvas=document.getElementById('revenue-chart');
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height,pad={top:34,right:30,bottom:68,left:90};
+  const totals=new Map();
+  for(const r of filtered)totals.set(r.y,(totals.get(r.y)||0)+r.rv);
+  const pts=[...totals.entries()].sort((a,b)=>a[0]-b[0]);
+  const max=Math.max(...pts.map(([,v])=>Math.abs(v)),1);
+  const cW=W-pad.left-pad.right,cH=H-pad.top-pad.bottom;
+  const bW=Math.max(18,cW/Math.max(pts.length,1)-14);
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#243642';ctx.font='700 18px Arial';ctx.fillText('Revenue by Calendar Year',pad.left,24);
+  ctx.strokeStyle='#d8e0e6';ctx.lineWidth=1;ctx.fillStyle='#65727c';ctx.font='12px Arial';
+  for(let i=0;i<=4;i++){
+    const y=pad.top+cH-(cH*i)/4;
+    ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(W-pad.right,y);ctx.stroke();
+    ctx.fillText(shortCurrency.format((max*i)/4),8,y+4);
+  }
+  pts.forEach(([yr,val],i)=>{
+    const x=pad.left+i*(cW/Math.max(pts.length,1))+7,bH=(Math.abs(val)/max)*cH,y=pad.top+cH-bH;
+    ctx.fillStyle=val>=0?'#1670a9':'#9a3e41';ctx.fillRect(x,y,bW,bH);
+    ctx.save();ctx.translate(x+bW/2,H-42);ctx.rotate(-Math.PI/4);
+    ctx.fillStyle='#39464f';ctx.font='12px Arial';ctx.fillText(String(yr),0,0);ctx.restore();
+  });
+}
+
+// ── Tabs ─────────────────────────────────────────────────────────────────────
+function renderTab(tab){
+  const content={
+    scope:`<h3>Scope</h3><p>This dataset includes revenues for U.S. federal lands and offshore areas. It does not include Native American lands, privately owned lands, or U.S. state lands.</p><p>The datasets currently include data tracked and managed by:</p><ul><li>Department of the Interior's (DOI) Office of Natural Resources Revenue (ONRR)</li><li>Bureau of Land Management (BLM)</li><li>Office of Surface Mining, Reclamation, and Enforcement (OSMRE)</li></ul>`,
+    about:`
+      <h3>What is a corporate crosswalk?</h3>
+      <p>The corporate crosswalk, located within the Excel download file, provides a listing of corporate parent companies to their subsidiaries. The "payor name" refers to the entity that submits revenue payments. Within the dataset, "company name" refers to this payor name. The "corporate name" identifies the overarching parent company that may own multiple payor names (subsidiaries).</p>
+      <p>The corporate crosswalk is updated annually with the calendar year data. ONRR does not have a reporting vehicle to track real-time corporate family relationships. We research the best publicly available information yearly to determine the corporate name. This dataset is for informational purposes only and should not be used for legal purposes. Users assume all risk when referencing this dataset.</p>
+      <h3>Why is there a line in the data called 'companies below threshold'?</h3>
+      <p>Many of the companies that fall below the $100,000 threshold are small companies, individuals, and family trusts. These aggregated payments also make up less than one quarter of one percent of total payments. Payments made by entities that reported less than $100,000 are aggregated (rolled-up) into this category.</p>
+      <h3>Why is there a line in the data called 'one mine one product'?</h3>
+      <p>Disclosing payments of solid mineral companies who produce and sell only one product from one mine can reveal proprietary sales price and contracting information. Disclosing this information causes competitive harm to these small companies. The Department of the Interior is legally obligated through the Trades Secrets Act to safeguard this data. Payments from these companies are aggregated (rolled-up) in this category. These aggregated payments make up less than three-thousandths of one percent of all payments.</p>
+      <h3>Why are some values negative?</h3>
+      <p>Companies can adjust and correct their payments for up to seven years after a transaction takes place. If a company overpays their royalty, rent, or bonus, they are entitled to recoup their overpayment. If the overpayment and recoupment happen in different years, the recoupment will appear as a negative amount in ONRR's revenue summaries.</p>
+      <h3>Why is there a Gas value, an Oil value, and an Oil &amp; Gas value?</h3>
+      <p>"Oil &amp; Gas" is the commodity category used for offshore oil and gas rents and bonuses. At the time of lease sale, it isn't known whether a lease will produce oil, gas, or both oil and gas. After a lease starts producing a commodity (or commodities), the lease owner starts paying royalties, and these royalties can then be associated with either oil or gas. Hence, rent and bonus lines of data will be associated with an "Oil &amp; Gas" commodity type, while royalty lines of data will be associated with either "Oil" or "Gas" commodity types.</p>
+      <h3>Why is the calendar year revenue by location national total slightly different than the federal revenue by company total?</h3>
+      <p>Our site has two federal revenue datasets. The one on this page is organized by the company that paid the revenue. The federal revenue by location dataset is organized by location. However, the national revenue totals are slightly different (by about $90 million). This is because the revenue by location dataset excludes revenue from offshore rights-of-way because they don't map to an offshore planning area.</p>`,
+    dictionary:`
+      <h3>Fields and definitions</h3>
+      <dl>
+        <dt>Calendar Year</dt><dd>The period between January 1 and December 31 for a given year.</dd>
+        <dt>Company Name</dt><dd>ONRR does not have a reporting vehicle to track real-time corporate family relationships. We research the best publicly available information yearly to determine the corporate parent. This dataset is for informational purposes only and should not be used for legal purposes. Users assume all risk when referencing this dataset.</dd>
+        <dt>Revenue Type</dt><dd>Revenues from U.S. natural resources fall into one of several types (see definitions below).</dd>
+        <dt>Commodity Type</dt><dd>The DOI collects revenues on over 60 different products. The majority of revenues come from Oil, Gas, Coal, and Renewables (Geothermal and Wind). Commodity categories include: Asphalt, Clay, Coal, Copper, Gas, Gemstones, Geothermal, Gilsonite, Gold, Hardrock, Hot Springs, Locatable Minerals, Mineral Materials, MLRS Mining Claims, N/A, Oil, Oil &amp; Gas, Oil Shale, Other Commodities, Other Leasable Minerals, Phosphate, Potash, Potassium, Quartz, Sodium, Sulfur, Wind.</dd>
+        <dt>Revenue</dt><dd>Total revenue.</dd>
+      </dl>
+      <h3 style="margin-top:20px">Revenue type definitions</h3>
+      <dl>
+        <dt>Royalties</dt><dd>A natural resource lease owner pays royalties after the lease starts producing a commodity in paying quantities. The amount is based on a percentage of the revenue from the commodity sold. The onshore royalty rate is 12.5%. Offshore leases can have royalty rates of 12.5%, 16.67%, or 18.75%.</dd>
+        <dt>Bonus</dt><dd>The amount paid by the highest successful bidder for a natural resource lease — the winning bid. Collected by BLM (onshore) and ONRR (offshore).</dd>
+        <dt>Rents</dt><dd>Periodic payments made for the right to continue exploration and development while a lease is not yet producing in paying quantities. The first year rental is collected by BLM; remaining rental payments are collected by ONRR.</dd>
+        <dt>Other Revenues</dt><dd>Revenues not included in the royalty, rent, or bonus categories. Includes minimum royalties, estimated royalties, settlement agreements, and interest.</dd>
+        <dt>Inspection Fees</dt><dd>The Department of the Interior inspects offshore oil and gas drilling rigs at least once a year. Inspection fees help recover some of the costs associated with these inspections.</dd>
+        <dt>Civil Penalties</dt><dd>Assessed for violations of laws applicable to extractive activities. Issued by ONRR, BOEM, or BSEE, and collected by ONRR. "Civil penalties" are collected by ONRR; "Civil penalties including late charges" are collected by BLM.</dd>
+        <dt>Permit Fees</dt><dd>Include mining claim fees paid when mining hardrock minerals, where applicants pay a set fee to stake a claim rather than bid on a lease. Also includes Applications to Drill.</dd>
+        <dt>Abandoned Mine Lands (AML) Fees</dt><dd>A fee paid by coal companies — $0.28 per ton of surface coal produced and $0.12 per ton of subsurface coal produced. These fees are placed in the AML fund to address reclamation of abandoned mines from operations prior to 1977.</dd>
+      </dl>
+      <h3 style="margin-top:20px">Detailed commodity definitions</h3>
+      <dl>
+        <dt>Locatable Minerals</dt><dd>Governed by the General Mining Law of 1872, these include metallic minerals (gold, silver, lead, copper, zinc, nickel, etc.), nonmetallic minerals (fluorspar, mica, tantalum, gemstones, certain limestones and gypsum, and heavy minerals in placer form), and certain uncommon variety minerals.</dd>
+        <dt>Mineral Materials</dt><dd>Made available for sale under the Materials Act of 1947. Includes sand, gravel, crushed stone, decorative stone, clay, and pumice. The BLM sells these at fair market value and may grant free-use permits to government agencies and nonprofit organizations.</dd>
+        <dt>MLRS Mining Claims</dt><dd>The BLM's Mineral and Land Records System (MLRS) contains mineral and land records transactions. Mining claim information from MLRS includes revenue data (permit fees) from companies mining locatable minerals on BLM lands.</dd>
+      </dl>`,
+    contact:`<h3>Contact us</h3><p>Do you have questions about the data or need data that isn't here? Contact our data specialists at <a href="mailto:onrrdatarequests@onrr.gov" style="color:var(--link)">onrrdatarequests@onrr.gov</a>.</p>`
+  };
+  document.getElementById('tab-panel').innerHTML=content[tab]||'';
+}
+
+// ── Downloads ─────────────────────────────────────────────────────────────────
+function downloadCsv(){
+  const hdr=['Calendar Year','Company Name','Revenue Type','Commodity','Revenue'];
+  const lines=[hdr,...filtered.map(r=>[r.y,r.co,r.rt,r.cm,r.rv])];
+  blob(lines.map(l=>l.map(csvVal).join(',')).join('\n'),'federal_revenue_by_company_filtered.csv','text/csv');
+}
+function downloadJson(){blob(JSON.stringify(filtered,null,2),'federal_revenue_by_company_filtered.json','application/json');}
+function blob(content,filename,type){
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=filename;a.click();
+}
+function csvVal(v){const t=String(v??'');return/[",\n]/.test(t)?`"${t.replace(/"/g,'""')}"`:`${t}`;}
+function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── Load XLSX via SheetJS from CDN ───────────────────────────────────────────
+(async()=>{
+  try{
+    await new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+      s.onload=res;s.onerror=rej;document.head.appendChild(s);
+    });
+    const resp=await fetch('./federal_revenue_by_company.xlsx');
+    if(!resp.ok)throw new Error('File not found');
+    const buf=await resp.arrayBuffer();
+    const wb=window.XLSX.read(buf,{type:'array'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=window.XLSX.utils.sheet_to_json(ws);
+    processRows(rows.map(r=>({y:r['Calendar Year'],co:r['Company Name'],rt:r['Revenue Type'],cm:r['Commodity'],rv:Math.round(r['Revenue']||0)})));
+  }catch(e){
+    console.warn('Could not load XLSX, using sample data.',e);
+    useSampleData();
+  }
+})();
+</script>
+</body>
+</html>
