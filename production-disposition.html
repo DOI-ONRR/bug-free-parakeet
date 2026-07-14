@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Production Disposition</title>
+<style>
+:root{--blue:#15558d;--blue-dark:#0d4574;--link:#0065a8;--ink:#222f3a;--muted:#65727c;--line:#ccd5dc;--white:#ffffff;--band:#eeeeee}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:14px/1.45 Arial,Helvetica,sans-serif;background:var(--white)}
+a{color:inherit}
+.container{width:min(960px,calc(100% - 36px));margin:0 auto}
+.topbar{background:var(--blue-dark);color:#fff;font-size:12px}
+.topbar__inner{width:min(1060px,calc(100% - 28px));min-height:38px;margin:0 auto;display:flex;justify-content:space-between;align-items:stretch;gap:16px}
+nav{display:flex;align-items:stretch;overflow-x:auto}
+nav a{display:flex;align-items:center;padding:0 12px;text-decoration:none;white-space:nowrap;color:#eaf2f7}
+nav a.active{background:#072f52}
+.site-search{display:flex;align-items:center;gap:6px;min-width:150px;color:#dceaf2}
+.site-search input{width:108px;border:0;border-radius:2px;padding:5px 6px}
+.hero{padding:30px 0 26px}
+.breadcrumb{color:var(--link);font-size:12px;margin-bottom:14px}
+h1,h2,h3,p{margin-top:0}
+h1{margin-bottom:10px;font-size:28px;line-height:1.15}
+h2{margin-bottom:14px;font-size:18px}
+.hero p{max-width:700px;color:#4b5963}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:20px}
+.metrics article{min-height:50px;padding:10px 12px;border-left:4px solid #4aa4d6;background:#eceff1}
+.metrics span{display:block;color:#66737d;font-size:11px}
+.metrics strong{display:block;margin-top:4px;font-size:13px}
+.filters-band{background:var(--band);border-top:1px solid #e1e4e6;border-bottom:1px solid #e1e4e6;padding:22px 0}
+.filter-panel{display:grid;grid-template-columns:repeat(7,1fr) auto;gap:8px;align-items:end;padding:14px;border:1px solid var(--line);background:#fff}
+label span{display:block;margin-bottom:5px;font-weight:700;font-size:11px}
+input[type=text]{width:100%;min-height:30px;padding:6px 8px;border:1px solid #aeb9c0;background:#fff;color:var(--ink)}
+.multi-select{position:relative}
+.multi-select-btn{width:100%;min-height:30px;padding:5px 28px 5px 8px;border:1px solid #aeb9c0;background:#fff;color:var(--ink);text-align:left;font-size:13px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative;border-radius:0;font-weight:400}
+.multi-select-btn::after{content:"▾";position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:11px;color:#65727c}
+.multi-select-btn.open::after{content:"▴"}
+.dropdown-list{display:none;position:absolute;top:100%;left:0;z-index:200;min-width:240px;max-height:280px;overflow-y:auto;background:#fff;border:1px solid #aeb9c0;box-shadow:0 4px 12px rgba(0,0,0,0.12)}
+.dropdown-list.open{display:block}
+.dropdown-item{display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;font-size:13px;white-space:nowrap}
+.dropdown-item:hover{background:#e9f2f8}
+.dropdown-item input[type=checkbox]{width:15px;height:15px;accent-color:var(--link);cursor:pointer;flex-shrink:0}
+.dropdown-divider{border-top:1px solid #e1e4e6;margin:2px 0}
+.co-search-wrap{position:relative}
+.co-search-wrap input{padding-right:28px}
+.co-arrow-btn{position:absolute;right:0;top:0;height:100%;width:26px;border:none;background:transparent;cursor:pointer;color:#65727c;font-size:11px}
+button,.button-link{min-height:34px;padding:8px 12px;border:1px solid var(--link);border-radius:2px;background:var(--link);color:#fff;font-weight:700;font-size:12px;text-decoration:none;cursor:pointer}
+.text-button{background:transparent;color:var(--link);border-color:transparent}
+.outline-button{min-height:28px;padding:5px 8px;background:#fff;color:var(--link)}
+.preview,.dataset-info{padding:28px 0}
+.section-heading,.result-bar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.view-toggle{display:inline-flex;border:1px solid var(--line)}
+.view-toggle button,.tabs button{min-height:28px;border:0;border-radius:0;background:#fff;color:var(--ink);font-weight:700}
+.view-toggle button.is-active,.tabs button.is-active{background:#e9f2f8;color:var(--link)}
+.table-wrap,.chart-wrap{overflow:auto;border:1px solid var(--line);background:#fff}
+table{width:100%;min-width:760px;border-collapse:collapse;font-size:12px}
+th,td{padding:9px 10px;border:1px solid #d7dee3;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{background:#f3f6f8;color:#2f3b44;font-weight:700}
+tbody tr:nth-child(even){background:#f9fbfc}
+tfoot td{background:#f2f5f7;font-weight:700}
+.chart-wrap{padding:18px}
+canvas{display:block;width:100%;height:auto}
+.result-bar{margin-top:12px;color:var(--muted);font-size:12px}
+.download-band{background:var(--band);border-top:1px solid #e1e4e6;border-bottom:1px solid #e1e4e6;padding:26px 0}
+.download-panel{padding:20px;border:1px solid var(--line);background:#fff}
+.download-actions{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0 16px;border-bottom:1px solid #dde3e8}
+.note{margin:12px 0 0;color:var(--muted);font-size:12px}
+.tabs{display:flex;gap:18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs button{position:relative;padding:10px 2px}
+.tabs button.is-active::after{position:absolute;right:0;bottom:-1px;left:0;height:3px;background:var(--link);content:""}
+#tab-panel{max-width:800px;padding-top:18px;color:#39464f;line-height:1.7}
+#tab-panel h3{font-size:15px;margin:20px 0 8px;color:#1a2530}
+#tab-panel h3:first-child{margin-top:0}
+#tab-panel p,#tab-panel li{font-size:13px;margin-bottom:8px}
+#tab-panel ul{padding-left:20px;margin-bottom:12px}
+#tab-panel dl{display:grid;grid-template-columns:260px 1fr;gap:10px 18px;margin-bottom:16px}
+#tab-panel dt{font-weight:700;font-size:13px}
+#tab-panel dd{font-size:13px;margin:0}
+#tab-panel table{min-width:auto;margin-bottom:16px}
+#tab-panel th,#tab-panel td{font-size:12px;padding:6px 10px}
+.info-banner{background:#e9f2f8;border-left:4px solid var(--link);padding:10px 14px;font-size:13px;color:#1a3a5c;margin-bottom:16px;border-radius:0 4px 4px 0}
+footer{padding:32px 0 22px;background:#1f1f1f;color:#dce0e2}
+.footer-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:48px}
+footer h3{font-size:13px;color:#fff}
+footer p{font-size:12px}
+.agency{width:min(960px,calc(100% - 36px));margin:18px auto 0;padding-top:16px;border-top:1px solid #3d3d3d;text-align:center;color:#aeb6bb}
+.is-hidden{display:none}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__inner">
+    <nav><a href="#">Getting Started</a><a href="#">Reporting</a><a href="#">References</a><a href="#">Paying</a><a href="#">Compliance &amp; Enforcement</a><a href="#">Indian Resources</a><a href="#">About ONRR</a><a class="active" href="#">Revenue Data</a></nav>
+    <label class="site-search"><span>Search</span><input type="search" aria-label="Site search"/></label>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html" style="color:var(--link)">Revenue Data</a> &gt; Datasets &gt; Production Disposition</div>
+      <h1>Production Disposition</h1>
+      <p>Monthly production disposition volumes from ONRR's OGOR-B form, covering oil and gas production from federal lands, federal waters, and Native American lands. Data shows how each product was used — sold, injected, transferred, flared, vented, or lost.</p>
+      <div class="metrics">
+        <article><span>Date Range</span><strong>Jan 2016 – Mar 2026</strong></article>
+        <article><span>Products</span><strong>Oil &amp; Gas</strong></article>
+        <article><span>Disposition Types</span><strong>35 codes</strong></article>
+        <article><span>Last Updated</span><strong>July 2, 2026</strong></article>
+        <article><span>Release Frequency</span><strong>Monthly</strong></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="filters-band">
+    <div class="container">
+      <div class="info-banner">Production disposition data is updated monthly, but final numbers aren't available for 3–4 months. The most recent data will be approximately 3–4 months prior to the current date.</div>
+      <form class="filter-panel" id="filters" onsubmit="return false">
+        <label><span>Year From</span><input type="text" id="year-from" inputmode="numeric"/></label>
+        <label><span>Year To</span><input type="text" id="year-to" inputmode="numeric"/></label>
+        <!-- Land Class -->
+        <div>
+          <span style="display:block;margin-bottom:5px;font-weight:700;font-size:11px">Land Class</span>
+          <div class="multi-select"><button type="button" class="multi-select-btn" id="lc-btn">All</button><div class="dropdown-list" id="lc-list"></div></div>
+        </div>
+        <!-- Land Category -->
+        <div>
+          <span style="display:block;margin-bottom:5px;font-weight:700;font-size:11px">Land Category</span>
+          <div class="multi-select"><button type="button" class="multi-select-btn" id="lcat-btn">All</button><div class="dropdown-list" id="lcat-list"></div></div>
+        </div>
+        <!-- State / Offshore Region -->
+        <div>
+          <span style="display:block;margin-bottom:5px;font-weight:700;font-size:11px">State / Offshore Region</span>
+          <div class="multi-select">
+            <div class="co-search-wrap">
+              <input type="text" id="state-filter" placeholder="Search…" autocomplete="off"/>
+              <button type="button" class="co-arrow-btn" id="state-arrow">▾</button>
+            </div>
+            <div class="dropdown-list" id="state-list"></div>
+          </div>
+        </div>
+        <!-- Commodity -->
+        <div>
+          <span style="display:block;margin-bottom:5px;font-weight:700;font-size:11px">Commodity</span>
+          <div class="multi-select"><button type="button" class="multi-select-btn" id="cm-btn">All</button><div class="dropdown-list" id="cm-list"></div></div>
+        </div>
+        <!-- Disposition -->
+        <div>
+          <span style="display:block;margin-bottom:5px;font-weight:700;font-size:11px">Disposition</span>
+          <div class="multi-select">
+            <div class="co-search-wrap">
+              <input type="text" id="disp-filter" placeholder="Search…" autocomplete="off"/>
+              <button type="button" class="co-arrow-btn" id="disp-arrow">▾</button>
+            </div>
+            <div class="dropdown-list" id="disp-list"></div>
+          </div>
+        </div>
+        <button class="text-button" type="button" id="clear-filters">Reset</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="container preview">
+    <div class="section-heading">
+      <h2>Data Preview</h2>
+      <div class="view-toggle" role="group">
+        <button type="button" class="is-active" data-view="table">Table</button>
+        <button type="button" data-view="chart">Chart</button>
+      </div>
+    </div>
+    <div class="table-wrap" id="table-view">
+      <table><thead id="preview-head"></thead><tbody id="preview-body"></tbody><tfoot id="preview-foot"></tfoot></table>
+    </div>
+    <div class="chart-wrap is-hidden" id="chart-view">
+      <canvas id="prod-chart" width="1050" height="420"></canvas>
+    </div>
+    <div class="result-bar">
+      <span id="result-count"></span>
+      <button type="button" class="outline-button" id="reset-table">Reset table</button>
+    </div>
+  </section>
+
+  <section class="download-band">
+    <div class="container">
+      <h2>Download Dataset</h2>
+      <div class="download-panel">
+        <p>Download production disposition data in your preferred format. The Excel file contains the full dataset as published by ONRR.</p>
+        <div class="download-actions">
+          <button id="download-csv" type="button">Download CSV</button>
+          <button id="download-json" type="button">Download JSON</button>
+          <a class="button-link" href="./OGORB.xlsx" download>Download Excel</a>
+        </div>
+        <p class="note">Note: CSV and JSON downloads reflect the active filters.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container dataset-info">
+    <h2>Dataset Information</h2>
+    <div class="tabs" role="tablist">
+      <button class="is-active" data-tab="scope" type="button">Scope</button>
+      <button data-tab="publication" type="button">Data Publication</button>
+      <button data-tab="about" type="button">About the Data</button>
+      <button data-tab="dictionary" type="button">Data Dictionary</button>
+      <button data-tab="contact" type="button">Contact</button>
+    </div>
+    <article id="tab-panel"></article>
+  </section>
+</main>
+<footer>
+  <div class="container footer-grid">
+    <div><h3>Office of Natural Resources Revenue</h3><p>We collect, account for, and verify federal energy and natural resource revenues.</p></div>
+    <div><h3>Contact</h3><p>Email: onrrdatarequests@onrr.gov</p></div>
+    <div><h3>Resources</h3><p>Data Dictionary<br/>API Documentation<br/>FAQ</p></div>
+  </div>
+  <p class="agency">U.S. Department of the Interior | Office of Natural Resources Revenue</p>
+</footer>
+
+<script>
+const LAND_CLASSES=["Federal","Mixed Exploratory","Native American"];
+const LAND_CATS=["Offshore","Onshore"];
+const STATES=["AK","AL","AR","CA","CO","ID","IL","KS","KY","LA","MI","MS","MT","ND","NE","NM","NV","NY","OH","OK","PA","SD","TX","UT","VA","WV","WY"];
+const REGIONS=["Offshore Alaska","Offshore Gulf","Offshore Pacific"];
+const ALL_STATES_REGIONS=[...STATES,...REGIONS];
+const COMMODITIES=["Gas (Mcf)","Oil (bbl)"];
+const DISPOSITIONS=["01 - Sales-Royalty Due-MEASURED","03 - Load Oil","04 - Sales-Royalty Due-Not Measured","05 - Sales-Royalty Not Due, Recovered Injection-MEASURED","06 - Sales-Non-Hydrocarbon Gas","07 - Condensate Sales-Royalty Due-MEASURED","08 - Spilled and/or Lost-Avoidable-Royalty Due","09 - Sales-Royalty Not Due-MEASURED","10 - Produced into Inventory Prior to Sales","11 - Transferred to Facility","12 - Transferred to Facility-Returned to L/A","13 - Transferred from Facility","14 - Injected on L/A","15 - Sales-Buy-Back-Measured-Royalty Not Due","16 - Pipeline Drip/Retrograde Scrubber Production","17 - Water Injected/Transferred Off-L/A","20 - Used on L/A-Native Production Only","21 - Flared Oil Well Gas - Royalty Not Due","22 - Flared Gas Well Gas - Royalty Not Due","23 - Spilled and/or Lost-Unavoidable-Royalty Not Due","24 - Theft","25 - Buy-Back Purchased for L/A Use","26 - Buy-Back-Used on L/A","27 - Water Disposal-Other than Injected/Transferred","29 - Waste Oil/Slop Oil","33 - Flared Gas - Royalty Due","42 - Differences/Adjustments","43 - Sales-Royalty Not Due-FMP Not Assigned","61 - Vented Oil Well Gas - Royalty Not Due","62 - Vented Gas Well Gas - Royalty Not Due","63 - Vented Gas - Royalty Due","66 - Flared Oil Well Gas - Royalty Due","67 - Flared Gas Well Gas - Royalty Due","68 - Vented Oil Well Gas - Royalty Due","69 - Vented Gas Well Gas - Royalty Due"];
+const YEARS=[2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026];
+
+let ALL_ROWS=[], filtered=[], view='table';
+let selLC=new Set(LAND_CLASSES), selLCAT=new Set(LAND_CATS);
+let selState=new Set(ALL_STATES_REGIONS), selCM=new Set(COMMODITIES), selDisp=new Set(DISPOSITIONS);
+
+const numFmt=new Intl.NumberFormat('en-US');
+const compactFmt=new Intl.NumberFormat('en-US',{notation:'compact',maximumFractionDigits:1});
+
+// ── Load data ─────────────────────────────────────────────────────────────────
+async function loadData(){
+  try{
+    await new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+      s.onload=res;s.onerror=rej;document.head.appendChild(s);
+    });
+    const resp=await fetch('./OGORB.xlsx');
+    if(!resp.ok)throw new Error('File not found');
+    const buf=await resp.arrayBuffer();
+    const wb=window.XLSX.read(buf,{type:'array',cellDates:true});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=window.XLSX.utils.sheet_to_json(ws);
+    ALL_ROWS=rows.map(r=>{
+      const d=new Date(r['Production Date']);
+      return {
+        y:d.getFullYear(), lc:r['Land Class'], lcat:r['Land Category'],
+        state:r['State']||'', region:r['Offshore Region']||'',
+        commodity:r['Commodity'],
+        disp:`${String(r['Disposition Code']).padStart(2,'0')} - ${r['Disposition Description']}`,
+        vol:r['Volume']||0
+      };
+    });
+  }catch(e){
+    console.warn('XLSX load failed, using sample data.',e);
+    ALL_ROWS=getSampleData();
+  }
+  document.getElementById('year-from').value=Math.min(...YEARS);
+  document.getElementById('year-to').value=Math.max(...YEARS);
+  applyFilters();
+}
+
+function getSampleData(){
+  return[
+    {y:2020,lc:'Federal',lcat:'Offshore',state:'',region:'Offshore Gulf',commodity:'Oil (bbl)',disp:'01 - Sales-Royalty Due-MEASURED',vol:850000000},
+    {y:2021,lc:'Federal',lcat:'Offshore',state:'',region:'Offshore Gulf',commodity:'Oil (bbl)',disp:'01 - Sales-Royalty Due-MEASURED',vol:920000000},
+    {y:2022,lc:'Federal',lcat:'Offshore',state:'',region:'Offshore Gulf',commodity:'Oil (bbl)',disp:'01 - Sales-Royalty Due-MEASURED',vol:980000000},
+    {y:2023,lc:'Federal',lcat:'Offshore',state:'',region:'Offshore Gulf',commodity:'Oil (bbl)',disp:'01 - Sales-Royalty Due-MEASURED',vol:1010000000},
+    {y:2024,lc:'Federal',lcat:'Offshore',state:'',region:'Offshore Gulf',commodity:'Oil (bbl)',disp:'01 - Sales-Royalty Due-MEASURED',vol:1050000000},
+    {y:2020,lc:'Federal',lcat:'Offshore',state:'',region:'Offshore Gulf',commodity:'Gas (Mcf)',disp:'01 - Sales-Royalty Due-MEASURED',vol:3200000000},
+    {y:2021,lc:'Federal',lcat:'Offshore',state:'',region:'Offshore Gulf',commodity:'Gas (Mcf)',disp:'01 - Sales-Royalty Due-MEASURED',vol:3400000000},
+    {y:2022,lc:'Federal',lcat:'Offshore',state:'',region:'Offshore Gulf',commodity:'Gas (Mcf)',disp:'01 - Sales-Royalty Due-MEASURED',vol:3600000000},
+    {y:2020,lc:'Federal',lcat:'Onshore',state:'WY',region:'',commodity:'Oil (bbl)',disp:'01 - Sales-Royalty Due-MEASURED',vol:120000000},
+    {y:2021,lc:'Federal',lcat:'Onshore',state:'WY',region:'',commodity:'Oil (bbl)',disp:'01 - Sales-Royalty Due-MEASURED',vol:130000000},
+    {y:2022,lc:'Federal',lcat:'Onshore',state:'NM',region:'',commodity:'Gas (Mcf)',disp:'01 - Sales-Royalty Due-MEASURED',vol:900000000},
+    {y:2022,lc:'Federal',lcat:'Offshore',state:'',region:'Offshore Gulf',commodity:'Oil (bbl)',disp:'22 - Flared Gas Well Gas - Royalty Not Due',vol:5000000},
+    {y:2023,lc:'Federal',lcat:'Offshore',state:'',region:'Offshore Gulf',commodity:'Gas (Mcf)',disp:'14 - Injected on L/A',vol:200000000},
+  ];
+}
+
+// ── Dropdown builders ─────────────────────────────────────────────────────────
+function buildDropdown(listId,btnId,items,selSet){
+  const list=document.getElementById(listId),btn=document.getElementById(btnId);
+  list.innerHTML='';
+  const aDiv=document.createElement('div');aDiv.className='dropdown-item';
+  aDiv.innerHTML=`<input type="checkbox" id="chk-all-${listId}" checked/><label for="chk-all-${listId}">All (${items.length})</label>`;
+  const aChk=aDiv.querySelector('input');
+  aChk.addEventListener('change',()=>{
+    if(aChk.checked)items.forEach(i=>selSet.add(i));else selSet.clear();
+    list.querySelectorAll(`input:not(#chk-all-${listId})`).forEach(c=>c.checked=aChk.checked);
+    updateBtn(btn,selSet,items);applyFilters();
+  });
+  list.appendChild(aDiv);
+  list.appendChild(Object.assign(document.createElement('div'),{className:'dropdown-divider'}));
+  items.forEach((item,i)=>{
+    const d=document.createElement('div');d.className='dropdown-item';
+    const id=`chk-${listId}-${i}`;
+    d.innerHTML=`<input type="checkbox" id="${id}" checked/><label for="${id}">${esc(item)}</label>`;
+    const chk=d.querySelector('input');
+    chk.addEventListener('change',()=>{
+      if(chk.checked)selSet.add(item);else selSet.delete(item);
+      aChk.checked=selSet.size===items.length;aChk.indeterminate=selSet.size>0&&selSet.size<items.length;
+      updateBtn(btn,selSet,items);applyFilters();
+    });
+    list.appendChild(d);
+  });
+}
+
+function buildSearchDropdown(listId,inputId,arrowId,allItems,selSet){
+  const list=document.getElementById(listId),inp=document.getElementById(inputId);
+  function rebuild(filter=''){
+    list.innerHTML='';
+    const matches=allItems.filter(c=>!filter||c.toLowerCase().includes(filter.toLowerCase()));
+    const aDiv=document.createElement('div');aDiv.className='dropdown-item';
+    const aCk=selSet.size===allItems.length,aIn=selSet.size>0&&selSet.size<allItems.length;
+    aDiv.innerHTML=`<input type="checkbox" id="chk-all-${listId}" ${aCk?'checked':''}/><label for="chk-all-${listId}">All (${allItems.length})</label>`;
+    const aChk=aDiv.querySelector('input');aChk.indeterminate=aIn;
+    aChk.addEventListener('change',()=>{
+      if(aChk.checked)allItems.forEach(i=>selSet.add(i));else selSet.clear();
+      rebuild(inp.value);updateSearchPlaceholder(inp,selSet,allItems);applyFilters();
+    });
+    list.appendChild(aDiv);
+    list.appendChild(Object.assign(document.createElement('div'),{className:'dropdown-divider'}));
+    if(!matches.length){const e=document.createElement('div');e.style.cssText='padding:8px 10px;font-size:13px;color:#888';e.textContent='No matches';list.appendChild(e);}
+    matches.forEach((item,i)=>{
+      const d=document.createElement('div');d.className='dropdown-item';
+      const id=`chk-${listId}-${i}`;
+      d.innerHTML=`<input type="checkbox" id="${id}" ${selSet.has(item)?'checked':''}/><label for="${id}">${esc(item)}</label>`;
+      const chk=d.querySelector('input');
+      chk.addEventListener('change',()=>{
+        if(chk.checked)selSet.add(item);else selSet.delete(item);
+        rebuild(inp.value);updateSearchPlaceholder(inp,selSet,allItems);applyFilters();
+      });
+      list.appendChild(d);
+    });
+  }
+  inp.addEventListener('input',()=>{rebuild(inp.value);list.classList.add('open');});
+  inp.addEventListener('focus',()=>{rebuild(inp.value);list.classList.add('open');});
+  inp.addEventListener('click',e=>e.stopPropagation());
+  document.getElementById(arrowId).addEventListener('click',e=>{
+    e.stopPropagation();const open=list.classList.contains('open');closeAll();
+    if(!open){rebuild(inp.value);list.classList.add('open');}
+  });
+  list.addEventListener('click',e=>e.stopPropagation());
+  rebuild();
+}
+
+function updateSearchPlaceholder(inp,selSet,all){
+  inp.placeholder=selSet.size===all.length?inp.getAttribute('data-ph')||'Search…':selSet.size===0?'None selected':`${selSet.size} selected`;
+}
+function updateBtn(btn,selSet,all){
+  if(selSet.size===0)btn.textContent='None';
+  else if(selSet.size===all.length)btn.textContent='All';
+  else if(selSet.size===1)btn.textContent=[...selSet][0];
+  else btn.textContent=`${selSet.size} selected`;
+}
+function setupToggle(btnId,listId){
+  const btn=document.getElementById(btnId),list=document.getElementById(listId);
+  btn.addEventListener('click',e=>{e.stopPropagation();const open=list.classList.contains('open');closeAll();if(!open){list.classList.add('open');btn.classList.add('open');}});
+  list.addEventListener('click',e=>e.stopPropagation());
+}
+function closeAll(){
+  document.querySelectorAll('.dropdown-list').forEach(l=>l.classList.remove('open'));
+  document.querySelectorAll('.multi-select-btn').forEach(b=>b.classList.remove('open'));
+}
+document.addEventListener('click',closeAll);
+
+// ── Filter & render ───────────────────────────────────────────────────────────
+function applyFilters(){
+  const from=Number(document.getElementById('year-from').value)||0;
+  const to=Number(document.getElementById('year-to').value)||9999;
+  filtered=ALL_ROWS.filter(r=>
+    r.y>=from&&r.y<=to&&
+    selLC.has(r.lc)&&selLCAT.has(r.lcat)&&
+    selCM.has(r.commodity)&&
+    selDisp.has(r.disp)&&
+    (selState.has(r.state)||selState.has(r.region)||(!r.state&&!r.region))
+  );
+  render();
+}
+
+function render(){
+  document.getElementById('result-count').textContent=`Showing ${filtered.length.toLocaleString()} matching rows`;
+  renderTable();
+  if(view==='chart')renderChart();
+}
+
+function renderTable(){
+  const years=[...new Set(filtered.map(r=>r.y))].sort((a,b)=>a-b);
+  const byDisp=new Map();
+  for(const r of filtered){
+    if(!byDisp.has(r.disp))byDisp.set(r.disp,{disp:r.disp,total:0,years:Object.fromEntries(years.map(y=>[y,0]))});
+    const t=byDisp.get(r.disp);t.total+=r.vol;t.years[r.y]=(t.years[r.y]||0)+r.vol;
+  }
+  const rows=[...byDisp.values()].sort((a,b)=>b.total-a.total).slice(0,15);
+  const totals=Object.fromEntries(years.map(y=>[y,0]));
+  for(const r of filtered)totals[r.y]=(totals[r.y]||0)+r.vol;
+  document.getElementById('preview-head').innerHTML=`<tr><th>Disposition</th>${years.map(y=>`<th>${y}</th>`).join('')}</tr>`;
+  document.getElementById('preview-body').innerHTML=rows.map(r=>`<tr><td>${esc(r.disp)}</td>${years.map(y=>`<td>${numFmt.format(r.years[y]||0)}</td>`).join('')}</tr>`).join('');
+  document.getElementById('preview-foot').innerHTML=`<tr><td>Total</td>${years.map(y=>`<td>${numFmt.format(totals[y]||0)}</td>`).join('')}</tr>`;
+}
+
+function renderChart(){
+  const canvas=document.getElementById('prod-chart'),ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height,pad={top:40,right:30,bottom:68,left:100};
+  const totals=new Map();
+  for(const r of filtered)totals.set(r.y,(totals.get(r.y)||0)+r.vol);
+  const pts=[...totals.entries()].sort((a,b)=>a[0]-b[0]);
+  const max=Math.max(...pts.map(([,v])=>Math.abs(v)),1);
+  const cW=W-pad.left-pad.right,cH=H-pad.top-pad.bottom;
+  const bW=Math.max(18,cW/Math.max(pts.length,1)-10);
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#243642';ctx.font='700 16px Arial';ctx.fillText('Production Disposition Volume by Year',pad.left,28);
+  ctx.strokeStyle='#d8e0e6';ctx.lineWidth=1;ctx.fillStyle='#65727c';ctx.font='11px Arial';
+  for(let i=0;i<=4;i++){
+    const y=pad.top+cH-(cH*i)/4;
+    ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(W-pad.right,y);ctx.stroke();
+    ctx.fillText(compactFmt.format((max*i)/4),4,y+4);
+  }
+  pts.forEach(([yr,val],i)=>{
+    const x=pad.left+i*(cW/Math.max(pts.length,1))+4,bH=(Math.abs(val)/max)*cH,y=pad.top+cH-bH;
+    ctx.fillStyle='#1670a9';ctx.fillRect(x,y,bW,bH);
+    ctx.save();ctx.translate(x+bW/2,H-42);ctx.rotate(-Math.PI/4);
+    ctx.fillStyle='#39464f';ctx.font='11px Arial';ctx.fillText(String(yr),0,0);ctx.restore();
+  });
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+const TAB_CONTENT={
+  scope:`
+    <h3>Scope</h3>
+    <p>This dataset includes oil and gas production disposition volumes for U.S. federal lands, federal waters, and Native American lands. It does not include privately owned minerals or U.S. state minerals.</p>
+    <p>Federal production data is available by location. Native American data is only available at the national level to protect private and personally identifiable information.</p>
+    <p>The Office of Natural Resources Revenue (ONRR) manages this dataset. The production disposition data for oil and gas is collected on <strong>Form ONRR-4054-B</strong> (Oil and Gas Operations Report, Part B).</p>
+    <h3>Coverage</h3>
+    <ul>
+      <li>This dataset is available from <strong>January 2016 through the most recently available month</strong>, which is usually 3–4 months prior to the current month.</li>
+      <li>A separate <strong>historical dataset</strong> covers January 2003 through December 2015 and is not updated.</li>
+    </ul>`,
+  publication:`
+    <h3>Data Publication</h3>
+    <p>We update this production disposition data every month, but <strong>final production numbers aren't available for 3–4 months</strong>. For example, the most recent production data for a file updated in November will be from July or August.</p>
+    <h3>Historical Data</h3>
+    <p>The historical dataset contains data from January 2003 through December 2015 and is not updated. The current dataset starting with January 2015 overlaps slightly with the historical dataset and is updated monthly.</p>`,
+  about:`
+    <h3>A note about "Mixed Exploratory" versus "Federal" production categories</h3>
+    <p>To build our data visualizations, production was combined from two types of jurisdictions: "federal" and "mixed exploratory."</p>
+    <ul>
+      <li><strong>Federal</strong> is production from federal onshore and offshore minerals.</li>
+      <li><strong>Mixed Exploratory</strong> is a temporary jurisdictional unit used until production is proven on that location. It comprises federal and/or Native American minerals, with other mineral ownership. Utilizing "mixed exploratory" helps drilling and production proceed in the most efficient and economical manner.</li>
+    </ul>
+    <h3>What does "disposition" mean?</h3>
+    <p>Disposition describes how oil or gas produced from a lease was used or removed. Each unit of production falls into one of the following categories:</p>
+    <ul>
+      <li>Directly removed or sold</li>
+      <li>Directly used or injected on the lease</li>
+      <li>Moved off the lease or transferred to a different facility</li>
+      <li>Flared, spilled, or lost</li>
+      <li>Lost through evaporation or shrinkage</li>
+      <li>Vented</li>
+    </ul>`,
+  dictionary:`
+    <h3>Fields and Definitions</h3>
+    <dl>
+      <dt>Production Date</dt><dd>The date in which the production occurred.</dd>
+      <dt>Land Class</dt><dd><strong>Federal</strong> — Federal lands owned by or under the jurisdiction of the federal government, including public domain, acquired, military acquired lands, and the Outer Continental Shelf.<br><strong>Native American</strong> — Tribal lands held in trust by the federal government for a tribe's use, and allotments held in trust for individual Native American use.<br><strong>Mixed Exploratory</strong> — A temporary jurisdictional unit used until production is proven on that location.</dd>
+      <dt>Land Category</dt><dd><strong>Onshore</strong> — Situated or occurring on land.<br><strong>Offshore</strong> — Submerged lands located farther than three miles off a state's coastline. For the Gulf of America, offshore is three marine leagues from Texas and Western Florida.</dd>
+      <dt>State</dt><dd>The state where the production occurred.</dd>
+      <dt>County</dt><dd>The county where the production occurred.</dd>
+      <dt>FIPS Code</dt><dd>A five-digit code that uniquely identifies counties in the U.S. The first two digits are the FIPS state code and the last three are the county code.</dd>
+      <dt>Offshore Region</dt><dd>BOEM separates offshore areas into four regions: Gulf of America, Atlantic, Pacific, and Alaska.</dd>
+      <dt>Disposition Code &amp; Description</dt><dd>A two-digit code and description indicating the means of product removal from the report entity. See disposition code tables below.</dd>
+      <dt>Commodity</dt><dd><strong>Oil (bbl)</strong> — Oil production, measured in barrels.<br><strong>Gas (Mcf)</strong> — Gas (natural gas), measured in thousand cubic feet.</dd>
+      <dt>Volume</dt><dd>The production disposition volume (amount). Units are shown in the Commodity field.</dd>
+    </dl>
+    <h3>Oil Disposition Codes</h3>
+    <table>
+      <thead><tr><th style="text-align:left">Code</th><th style="text-align:left">Description</th></tr></thead>
+      <tbody>
+        ${[["01","Sales - Royalty Due - MEASURED"],["03","Load Oil"],["04","Sales - Royalty Due - Not Measured"],["05","Sales - Royalty Not Due, Recovered Injection - MEASURED"],["07","Condensate Sales - Royalty Due - MEASURED"],["08","Spilled and/or Lost - Avoidable - Royalty Due"],["09","Sales - Royalty Not Due - MEASURED"],["10","Produced into Inventory Prior to Sales"],["11","Transferred to Facility"],["13","Transferred from Facility"],["14","Injected on L/A"],["15","Sales Buy-Back - Measured - Royalty Not Due"],["16","Pipeline Drip/Retrograde Scrubber Production"],["20","Used on L/A - Native Production Only"],["23","Spilled and/or Lost - Unavoidable - Royalty Not Due"],["24","Theft"],["25","Buy-Back Purchased for L/A Use"],["26","Buy-Back - Used on L/A"],["29","Waste Oil/Slop Oil"],["42","Differences/Adjustments"],["43","Sales - Royalty Not Due - FMP not Assigned"]].map(([c,d])=>`<tr><td style="text-align:left">${c}</td><td style="text-align:left">${d}</td></tr>`).join('')}
+      </tbody>
+    </table>
+    <h3>Gas Disposition Codes</h3>
+    <table>
+      <thead><tr><th style="text-align:left">Code</th><th style="text-align:left">Description</th></tr></thead>
+      <tbody>
+        ${[["01","Sales - Royalty Due - MEASURED"],["04","Sales - Royalty Due - Not Measured"],["05","Sales - Royalty Not Due - Recovered Injection - MEASURED"],["06","Sales - Non-Hydrocarbon Gas"],["08","Spilled and/or Lost - Avoidable - Royalty Due"],["09","Sales - Royalty Not Due - MEASURED"],["11","Transferred to Facility"],["12","Transferred to Facility - Returned to L/A"],["13","Transferred from Facility"],["14","Injected on L/A"],["15","Sales Buy-Back - Measured - Royalty Not Due"],["20","Used on L/A - Native Production Only"],["21","Flared Oil - Well Gas"],["22","Flared Gas - Well Gas"],["23","Spilled and/or Lost - Unavoidable - Royalty Not Due"],["24","Theft"],["25","Buy-Back - Purchased for L/A Use"],["26","Buy-Back - Used on L/A"],["33","Flared Gas - Royalty Due"],["42","Differences/Adjustments"],["43","Sales - Royalty Not Due - FMP Not Assigned"],["61","Vented Oil - Well Gas"],["62","Vented Gas - Well Gas"],["63","Vented Gas - Royalty Due"]].map(([c,d])=>`<tr><td style="text-align:left">${c}</td><td style="text-align:left">${d}</td></tr>`).join('')}
+      </tbody>
+    </table>`,
+  contact:`
+    <h3>Contact us</h3>
+    <p>Do you have questions about the data or need data that isn't here? Contact our data specialists at <a href="mailto:onrrdatarequests@onrr.gov" style="color:var(--link)">onrrdatarequests@onrr.gov</a>.</p>`
+};
+
+function renderTab(tab){document.getElementById('tab-panel').innerHTML=TAB_CONTENT[tab]||'';}
+
+// ── Downloads ─────────────────────────────────────────────────────────────────
+function downloadCsv(){
+  const hdr=['Year','Land Class','Land Category','State','Offshore Region','Commodity','Disposition','Volume'];
+  const lines=[hdr,...filtered.map(r=>[r.y,r.lc,r.lcat,r.state,r.region,r.commodity,r.disp,r.vol])];
+  blob(lines.map(l=>l.map(csvVal).join(',')).join('\n'),'production_disposition_filtered.csv','text/csv');
+}
+function downloadJson(){blob(JSON.stringify(filtered,null,2),'production_disposition_filtered.json','application/json');}
+function blob(content,filename,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=filename;a.click();}
+function csvVal(v){const t=String(v??'');return/[",\n]/.test(t)?`"${t.replace(/"/g,'""')}"`:`${t}`;}
+function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── Wire up ───────────────────────────────────────────────────────────────────
+buildDropdown('lc-list','lc-btn',LAND_CLASSES,selLC);
+buildDropdown('lcat-list','lcat-btn',LAND_CATS,selLCAT);
+buildDropdown('cm-list','cm-btn',COMMODITIES,selCM);
+buildSearchDropdown('state-list','state-filter','state-arrow',ALL_STATES_REGIONS,selState);
+buildSearchDropdown('disp-list','disp-filter','disp-arrow',DISPOSITIONS,selDisp);
+setupToggle('lc-btn','lc-list');
+setupToggle('lcat-btn','lcat-list');
+setupToggle('cm-btn','cm-list');
+
+document.getElementById('year-from').value=2016;
+document.getElementById('year-to').value=2026;
+document.getElementById('year-from').addEventListener('input',applyFilters);
+document.getElementById('year-to').addEventListener('input',applyFilters);
+
+document.getElementById('clear-filters').addEventListener('click',()=>{
+  document.getElementById('year-from').value=2016;
+  document.getElementById('year-to').value=2026;
+  selLC=new Set(LAND_CLASSES);selLCAT=new Set(LAND_CATS);
+  selCM=new Set(COMMODITIES);selDisp=new Set(DISPOSITIONS);selState=new Set(ALL_STATES_REGIONS);
+  document.getElementById('lc-list').querySelectorAll('input').forEach(c=>c.checked=true);
+  document.getElementById('lcat-list').querySelectorAll('input').forEach(c=>c.checked=true);
+  document.getElementById('cm-list').querySelectorAll('input').forEach(c=>c.checked=true);
+  document.getElementById('state-filter').value='';
+  document.getElementById('disp-filter').value='';
+  updateBtn(document.getElementById('lc-btn'),selLC,LAND_CLASSES);
+  updateBtn(document.getElementById('lcat-btn'),selLCAT,LAND_CATS);
+  updateBtn(document.getElementById('cm-btn'),selCM,COMMODITIES);
+  buildSearchDropdown('state-list','state-filter','state-arrow',ALL_STATES_REGIONS,selState);
+  buildSearchDropdown('disp-list','disp-filter','disp-arrow',DISPOSITIONS,selDisp);
+  applyFilters();
+});
+
+document.getElementById('reset-table').addEventListener('click',()=>document.getElementById('clear-filters').click());
+
+document.querySelectorAll('[data-view]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    view=btn.dataset.view;
+    document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('is-active',b===btn));
+    document.getElementById('table-view').classList.toggle('is-hidden',view!=='table');
+    document.getElementById('chart-view').classList.toggle('is-hidden',view!=='chart');
+    render();
+  });
+});
+
+document.querySelectorAll('[data-tab]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('is-active',b===btn));
+    renderTab(btn.dataset.tab);
+  });
+});
+
+document.getElementById('download-csv').addEventListener('click',downloadCsv);
+document.getElementById('download-json').addEventListener('click',downloadJson);
+
+loadData();
+renderTab('scope');
+</script>
+</body>
+</html>
