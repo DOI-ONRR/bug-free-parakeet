@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Federal Sales</title>
+<style>
+:root{--blue:#15558d;--blue-dark:#0d4574;--link:#0065a8;--ink:#222f3a;--muted:#65727c;--line:#ccd5dc;--white:#ffffff;--band:#eeeeee}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:14px/1.45 Arial,Helvetica,sans-serif;background:var(--white)}
+a{color:inherit}
+.container{width:min(900px,calc(100% - 36px));margin:0 auto}
+.topbar{background:var(--blue-dark);color:#fff;font-size:12px}
+.topbar__inner{width:min(1060px,calc(100% - 28px));min-height:38px;margin:0 auto;display:flex;justify-content:space-between;align-items:stretch;gap:16px}
+nav{display:flex;align-items:stretch;overflow-x:auto}
+nav a{display:flex;align-items:center;padding:0 12px;text-decoration:none;white-space:nowrap;color:#eaf2f7}
+nav a.active{background:#072f52}
+.site-search{display:flex;align-items:center;gap:6px;min-width:150px;color:#dceaf2}
+.site-search input{width:108px;border:0;border-radius:2px;padding:5px 6px}
+.hero{padding:30px 0 26px}
+.breadcrumb{color:var(--link);font-size:12px;margin-bottom:14px}
+h1,h2,h3,p{margin-top:0}
+h1{margin-bottom:10px;font-size:28px;line-height:1.15}
+h2{margin-bottom:14px;font-size:18px}
+.hero p{max-width:700px;color:#4b5963}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px}
+.metrics article{min-height:50px;padding:10px 12px;border-left:4px solid #4aa4d6;background:#eceff1}
+.metrics span{display:block;color:#66737d;font-size:11px}
+.metrics strong{display:block;margin-top:4px;font-size:13px}
+.download-band{background:var(--band);border-top:1px solid #e1e4e6;border-bottom:1px solid #e1e4e6;padding:26px 0}
+.download-panel{padding:20px;border:1px solid var(--line);background:#fff}
+.download-actions{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0 16px;border-bottom:1px solid #dde3e8}
+.note{margin:12px 0 0;color:var(--muted);font-size:12px}
+button,.button-link{min-height:34px;padding:8px 14px;border:1px solid var(--link);border-radius:2px;background:var(--link);color:#fff;font-weight:700;font-size:12px;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.dataset-info{padding:28px 0}
+.tabs{display:flex;gap:18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs button{position:relative;padding:10px 2px;min-height:28px;border:0;border-radius:0;background:#fff;color:var(--ink);font-weight:700;font-size:14px;cursor:pointer}
+.tabs button.is-active{color:var(--link)}
+.tabs button.is-active::after{position:absolute;right:0;bottom:-1px;left:0;height:3px;background:var(--link);content:""}
+#tab-panel{max-width:800px;padding-top:18px;color:#39464f;line-height:1.7}
+#tab-panel h3{font-size:15px;margin:20px 0 8px;color:#1a2530}
+#tab-panel h3:first-child{margin-top:0}
+#tab-panel p,#tab-panel li{font-size:13px;margin-bottom:8px}
+#tab-panel ul{padding-left:20px;margin-bottom:12px}
+#tab-panel dl{display:grid;grid-template-columns:260px 1fr;gap:10px 18px;margin-bottom:16px}
+#tab-panel dt{font-weight:700;font-size:13px}
+#tab-panel dd{font-size:13px;margin:0}
+#tab-panel table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:12px}
+#tab-panel th,#tab-panel td{padding:7px 10px;border:1px solid #d7dee3;text-align:left}
+#tab-panel thead th{background:#f3f6f8;font-weight:700;color:#2f3b44}
+#tab-panel tbody tr:nth-child(even){background:#f9fbfc}
+footer{padding:32px 0 22px;background:#1f1f1f;color:#dce0e2}
+.footer-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:48px}
+footer h3{font-size:13px;color:#fff}
+footer p{font-size:12px}
+.agency{width:min(900px,calc(100% - 36px));margin:18px auto 0;padding-top:16px;border-top:1px solid #3d3d3d;text-align:center;color:#aeb6bb}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__inner">
+    <nav><a href="#">Getting Started</a><a href="#">Reporting</a><a href="#">References</a><a href="#">Paying</a><a href="#">Compliance &amp; Enforcement</a><a href="#">Indian Resources</a><a href="#">About ONRR</a><a class="active" href="#">Revenue Data</a></nav>
+    <label class="site-search"><span>Search</span><input type="search" aria-label="Site search"/></label>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html" style="color:var(--link)">Revenue Data</a> &gt; <a href="index.html" style="color:var(--link)">Datasets</a> &gt; Federal Sales</div>
+      <h1>Federal Sales</h1>
+      <p>This dataset contains federal sales data from Form ONRR-2014 for oil, gas, and natural gas liquids (NGLs). It contains reported volumes for royalty and non-royalty bearing transactions by calendar year, covering sales transactions from 2013–2025.</p>
+      <div class="metrics">
+        <article><span>Date Range</span><strong>2013 – 2025</strong></article>
+        <article><span>Products</span><strong>Oil, Gas, NGLs</strong></article>
+        <article><span>Last Updated</span><strong>May 29, 2026</strong></article>
+        <article><span>Release Frequency</span><strong>Annually</strong></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="download-band">
+    <div class="container">
+      <h2>Download Dataset</h2>
+      <div class="download-panel">
+        <p>Download the full federal sales dataset. The Excel file includes the data, data dictionary, and notes. Data is current as of May 29, 2026.</p>
+        <div class="download-actions">
+          <a class="button-link" href="./federal_sales.xlsx" download>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Excel (xlsx, 94 KB)
+          </a>
+          <a class="button-link" href="./federal_sales.csv" download>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download CSV (99 KB)
+          </a>
+        </div>
+        <p class="note">Calendar year federal sales data, data dictionary and notes, 2013–2025.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container dataset-info">
+    <h2>Dataset Information</h2>
+    <div class="tabs" role="tablist">
+      <button class="is-active" data-tab="scope" type="button">Scope</button>
+      <button data-tab="publication" type="button">Data Publication</button>
+      <button data-tab="about" type="button">About the Data</button>
+      <button data-tab="dictionary" type="button">Data Dictionary</button>
+      <button data-tab="contact" type="button">Contact</button>
+    </div>
+    <article id="tab-panel"></article>
+  </section>
+</main>
+
+<footer>
+  <div class="container footer-grid">
+    <div><h3>Office of Natural Resources Revenue</h3><p>We collect, account for, and verify federal energy and natural resource revenues.</p></div>
+    <div><h3>Contact</h3><p>Email: onrrdatarequests@onrr.gov</p></div>
+    <div><h3>Resources</h3><p>Data Dictionary<br/>API Documentation<br/>FAQ</p></div>
+  </div>
+  <p class="agency">U.S. Department of the Interior | Office of Natural Resources Revenue</p>
+</footer>
+
+<script>
+const TAB_CONTENT={
+  scope:`
+    <h3>Scope</h3>
+    <p>ONRR collects the data from the Sales and Royalty Remittance Report, Form ONRR-2014. Reporters submit Form ONRR-2014 to provide information on royalties due based on sales or use of the natural resource production.</p>
+    <p>ONRR collects revenues on over 60 different products, but this dataset only includes data for:</p>
+    <ul>
+      <li>Oil, gas, and NGLs on U.S. federal onshore lands</li>
+      <li>Oil, gas, and NGLs on U.S. federal offshore areas</li>
+    </ul>
+    <p>It does not include Native American land, privately-owned lands, or U.S. state lands. The dataset includes all ONRR Form-2014 federal reported royalty transaction codes, royalty relief codes, and transaction code (TC) 13 Quality Bank and Gravity Bank Adjustments.</p>
+    <p>After reporters submit Form ONRR-2014, ONRR aggregates the data by totaling the data values by the sales year and then publishes this dataset.</p>`,
+
+  publication:`
+    <h3>Data Publication</h3>
+    <p>The federal sales dataset is updated annually.</p>
+    <h3>What is the difference between sales year and accounting year data?</h3>
+    <p>The federal sales dataset is <strong>sales year data</strong> reported on a calendar year basis. Although sales year and accounting year appear similar, there are key differences:</p>
+    <ul>
+      <li><strong>Sales year data</strong> includes sales transaction records for a specific year without adjustments for previous years. This data provides a snapshot of reported sales. It is useful for analyzing sales trends and comparing them to production volumes. The data changes, so ONRR publishes it with an as-of date.</li>
+      <li><strong>Accounting year data</strong> includes sales transaction records accepted by ONRR within a specific year with adjustments for previous years. The data shows the money ONRR collected and disbursed from the current year and any adjustments or corrections for previous years. It does not provide accurate trend analyses of sales values or volumes over time.</li>
+    </ul>`,
+
+  about:`
+    <h3>What are the steps to develop federal sales data?</h3>
+    <ul>
+      <li><strong>Reporters submit royalty reporting</strong> — Reporters use ONRR's royalty reporting system, eCommerce, to report royalty revenues on federal oil and gas using the electronic Report of Sales and Royalty Remittance Form (ONRR–2014).</li>
+      <li><strong>ONRR aggregates sales data</strong> — ONRR collects the royalty reporting data from payors across federal lands and aggregates it to develop this publicly available sales dataset.</li>
+      <li><strong>Calculation of Effective Royalty Rate</strong> — The Effective Royalty Rate (ERR) accounts for royalty relief, deductions, and other adjustments before the royalty value is divided by the sales value. The ERR is an equation defined by the Office of Inspector General (OIG). ONRR does not use the ERR in any of its processes.</li>
+    </ul>
+    <h3>What are transaction codes (TC)?</h3>
+    <p>Transaction codes are used on Form ONRR-2014 and organized by function. This dataset does not include all transaction codes — only those specific to royalty collection for oil and gas products.</p>
+    <table>
+      <thead><tr><th>Transaction Code</th><th>Description</th></tr></thead>
+      <tbody>
+        ${[["01","Royalty Due"],["08","Royalty-in-Kind (Other)"],["10","Compensatory Royalty Payment"],["11","Transportation Allowance"],["13","Quality Bank and Gravity Bank Adjustment"],["15","Processing Allowance"],["39","Net Profit Share - Unprofitable"],["40","Net Profit Share - Profitable"],["41","Offshore Deep Water Royalty Relief"],["44","DWRRA - EPA Sec 344 - Shallow Water Deep Gas Royalty Relief (SV)"],["55","DWRRA - EPA Sec 345 - Deep Water Royalty Relief (SV)"],["RR","Royalty Relief"]].map(([c,d])=>`<tr><td>${c}</td><td>${d}</td></tr>`).join('')}
+      </tbody>
+    </table>
+    <h3>What are product codes?</h3>
+    <p>Product codes define the product or commodity on Form ONRR-2014. This dataset only includes product codes related to oil, gas, and NGLs.</p>
+    <table>
+      <thead><tr><th>Product Code</th><th>Description</th><th>Commodity</th><th>Unit</th></tr></thead>
+      <tbody>
+        ${[["01","Oil","Oil","bbl"],["02","Condensate","Oil","bbl"],["03","Processed (Residue) Gas","Gas","mcf"],["04","Unprocessed Gas","Gas","mcf"],["05","Drip or Scrubber Condensate","Oil","bbl"],["06","Inlet Scrubber","Oil","bbl"],["07","Gas Plant Products","NGL","gal"],["08","Gas Hydrate","Gas","mcf"],["12","Flash Gas","Gas","mcf"],["13","Fuel Oil","Oil","bbl"],["14","Oil Lost","Oil","bbl"],["15","Pipeline Fuel/Loss","Gas","mcf"],["16","Gas Lost - Flared or Vented","Gas","mcf"],["20","Other Liquid Hydrocarbons","Oil","bbl"],["39","Coal Bed Methane","Gas","mcf"],["61","Sweet Crude","Oil","bbl"],["62","Sour Crude","Oil","bbl"],["63","Asphaltic Crude","Oil","bbl"],["64","Black Wax Crude","Oil","bbl"],["65","Yellow Wax Crude","Oil","bbl"],["66","Flared Oil Well Gas","Gas","mcf"],["67","Flared Gas Well Gas","Gas","mcf"],["68","Vented Oil Well Gas","Gas","mcf"],["69","Vented Gas Well Gas","Gas","mcf"],["70","Gas Lost Prior to Royalty Measurement Point","Gas","mcf"]].map(([c,d,cm,u])=>`<tr><td>${c}</td><td>${d}</td><td>${cm}</td><td>${u}</td></tr>`).join('')}
+      </tbody>
+    </table>
+    <h3>How are quality and gravity bank adjustments calculated?</h3>
+    <p>Quality and gravity bank adjustments are made prior to any allowances and are included in the reporting. These adjustments (TC 13) report the difference in quality (gravity) between oil measured at the BLM or BSEE-approved point of royalty settlement and the oil delivered to the refiner at the delivery point. The dataset rolls up TC 13 adjustments with TC 01 (Royalty) reporting for oil.</p>
+    <h3>What does "not tied to a commodity" mean?</h3>
+    <p>As part of the COVID royalty relief program, reporters were not required to tie their reporting to a specific product code. Due to this, ONRR is unable to allocate the reported information to the various products. "Not tied to a commodity" references transactions identified as COVID royalty relief.</p>
+    <h3>What is COVID royalty relief?</h3>
+    <p>Under 30 CFR 203.80, the Bureau of Safety and Environmental Enforcement (BSEE) can grant special case royalty relief on a product or lease basis. In 2020 and 2021, BSEE granted limited royalty relief known as COVID royalty relief. COVID royalty relief is separated in this dataset because payors were not required to report a product.</p>`,
+
+  dictionary:`
+    <h3>Fields and Definitions</h3>
+    <dl>
+      <dt>Calendar Year</dt><dd>The period between January 1 and December 31 for a given year. This dataset is sales year data reported on a calendar year basis.</dd>
+      <dt>Land Class</dt><dd>All data in this dataset is federal. Federal lands are owned by or under the jurisdiction of the federal government, including public domain lands, acquired lands, military acquired lands, and the Outer Continental Shelf.</dd>
+      <dt>Land Category</dt><dd><strong>Onshore</strong> — Situated or occurring on land.<br><strong>Offshore</strong> — Submerged lands located farther than three miles off a state's coastline, or three marine leagues into the Gulf of America off Texas and western Florida.</dd>
+      <dt>State / Offshore Region</dt><dd>The state name or BOEM offshore region (Gulf of America, Atlantic, Pacific, or Alaska) where the sales occurred.</dd>
+      <dt>Revenue Type</dt><dd><strong>Royalties</strong> — Paid after a lease starts producing a commodity in paying quantities, based on a percentage of the revenue from the commodity sold.<br><strong>COVID Royalty Relief</strong> — Always a negative value. Granted by BSEE in 2020 and 2021; given its own category because payors were not required to report a product.</dd>
+      <dt>Commodity</dt><dd>Oil, Gas, NGL, or "Not Tied to a Commodity" (COVID royalty relief transactions).</dd>
+      <dt>Sales Volume</dt><dd>A reported field on Form ONRR-2014. The quantity and quality of production as measured at the approved royalty measurement point that is then sold. BLM or BSEE approve measuring points.</dd>
+      <dt>Gas MMBtu Volume</dt><dd>Volume measured in Million British Thermal Units (MMBtu). One BTU is the amount of heat required to raise the temperature of one pound of water by one degree Fahrenheit. MMBtu is the globally used energy value measurement.</dd>
+      <dt>Unit Value</dt><dd>The per-unit price applied to the royalty-bearing volume.</dd>
+      <dt>Sales Value</dt><dd>A reported field on Form ONRR-2014. Calculated by multiplying the volumes sold by the agreed upon unit price, for each product based on pricing contracts and approved valuation guidelines.</dd>
+      <dt>Royalty Value Prior to Allowances (RVPA)</dt><dd>Calculated by multiplying sales value by the royalty rate.</dd>
+      <dt>Transportation Allowances (TA)</dt><dd>Deductions in determining royalty value for the reasonable, actual costs incurred by the lessee for moving oil or gas to a point of sale or delivery off of the lease, unit area, or communitized area.</dd>
+      <dt>Processing Allowances (PA)</dt><dd>Deductions from royalty value for the lessee's actual, reasonable costs of processing a gas stream.</dd>
+      <dt>Royalty Value Less Allowances (RVLA)</dt><dd>Calculated by subtracting allowances (transportation, processing) from royalty value.</dd>
+      <dt>Effective Royalty Rate</dt><dd>A concept created by the Office of Inspector General (OIG). Accounts for royalty relief, deductions, and other adjustments before the royalty value is divided by the sales value. ONRR does not use the ERR in any of its processes.</dd>
+    </dl>`,
+
+  contact:`
+    <h3>Contact us</h3>
+    <p>Do you have questions about the data or need data that isn't here? Contact our data specialists at <a href="mailto:onrrdatarequests@onrr.gov" style="color:var(--link)">onrrdatarequests@onrr.gov</a>.</p>`
+};
+
+function renderTab(tab){document.getElementById('tab-panel').innerHTML=TAB_CONTENT[tab]||'';}
+
+document.querySelectorAll('[data-tab]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('is-active',b===btn));
+    renderTab(btn.dataset.tab);
+  });
+});
+
+renderTab('scope');
+</script>
+</body>
+</html>
